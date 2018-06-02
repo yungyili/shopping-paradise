@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Category = mongoose.model('categories');
+const Item = mongoose.model('items');
 
 module.exports = (app) => {
   app.post("/api/category",
@@ -82,7 +83,7 @@ module.exports = (app) => {
 
     });
 
-    app.get("/api/category/path/:id", /*auth.authenticate(),*/
+    app.get("/api/category/:id/path", /*auth.authenticate(),*/
       async (req, res) => {
         console.log("get /category:", req.params.id);
         const category = await Category.findOne({_id: req.params.id}).exec();
@@ -100,4 +101,25 @@ module.exports = (app) => {
         });
 
       });
+
+      app.get("/api/category/:id/item",
+        async (req, res) => {
+          console.log("get /api/category/:id/item:", req.params.id);
+          const categoryId = req.params.id;
+          const category = await Category.findOne({_id: categoryId}).exec();
+
+          if(!category){
+            console.log('get /api/category/:id/item: cannot find category');
+            res.sendStatus(400);
+            return;
+          }
+
+          await Item.find({_category: categoryId},function(err, items){
+            if (err){
+              console.log('get /api/category/:id/item: cannot find items');
+              res.sendStatus(400);
+            }
+            res.json(items);
+          });
+        });
 }
