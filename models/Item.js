@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const mongoosePaginate = require('mongoose-paginate');
 
 const ItemSchema = new Schema({
   title: String,
@@ -10,5 +11,7 @@ const ItemSchema = new Schema({
   _user: {type: Schema.Types.ObjectId, ref: 'users'},
   _category: {type: Schema.Types.ObjectId, ref: 'categories'}
 });
+
+ItemSchema.plugin(mongoosePaginate);
 
 mongoose.model('items', ItemSchema);

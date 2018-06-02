@@ -64,6 +64,7 @@ module.exports = (app) => {
 
       });
 
+
   app.get("/api/category/:id", /*auth.authenticate(),*/
     async (req, res) => {
       console.log("get /category:", req.params.id);
@@ -82,6 +83,25 @@ module.exports = (app) => {
       });
 
     });
+
+    app.get("/api/category/:id/sub", /*auth.authenticate(),*/
+      async (req, res) => {
+        console.log("get /api/category/:id/sub: ", req.params.id);
+        const category = await Category.findOne({_id: req.params.id}).exec();
+
+        if(!category){
+          res.sendStatus(400);
+          return;
+        }
+
+        await category.selfAndChildren(function(err, categories){
+          if (err){
+            res.sendStatus(400);
+          }
+          res.json(categories);
+        });
+
+      });
 
     app.get("/api/category/:id/path", /*auth.authenticate(),*/
       async (req, res) => {
@@ -105,21 +125,38 @@ module.exports = (app) => {
       app.get("/api/category/:id/item",
         async (req, res) => {
           console.log("get /api/category/:id/item:", req.params.id);
+          console.log("get /api/category/:id/item: query:", req.query);
           const categoryId = req.params.id;
           const category = await Category.findOne({_id: categoryId}).exec();
 
-          if(!category){
+          if(!category) {
             console.log('get /api/category/:id/item: cannot find category');
             res.sendStatus(400);
             return;
           }
 
-          await Item.find({_category: categoryId},function(err, items){
-            if (err){
-              console.log('get /api/category/:id/item: cannot find items');
-              res.sendStatus(400);
-            }
-            res.json(items);
-          });
+          if (!req.query.pageNum || !req.query.perPage) {
+            await Item.find({_category: categoryId},function(err, items){
+              if (err){
+                console.log('get /api/category/:id/item: cannot find items');
+                res.sendStatus(400);
+                return;
+              }
+              res.json(items);
+            });
+          } else {
+            const limit = parseInt(req.query.perPage);
+            const page = parseInt(req.query.pageNum);
+
+            Item.paginate({_category: categoryId}, { page: page, limit: limit }, function(err, result) {
+              if (err){
+                console.log('get /api/category/:id/item: cannot find items');
+                res.sendStatus(400);
+                return;
+              }
+              res.json(result.docs);
+            });
+          }
+
         });
 }
