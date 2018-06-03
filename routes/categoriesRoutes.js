@@ -122,6 +122,44 @@ module.exports = (app) => {
 
       });
 
+      app.get("/api/category/:id/item/count",
+        async (req, res) => {
+          console.log("get /api/category/:id/item.count:", req.params.id);
+          const categoryId = req.params.id;
+          const category = await Category.findOne({_id: categoryId}).exec();
+
+          if(!category) {
+            console.log('get /api/category/:id/item/count: cannot find category');
+            res.sendStatus(400);
+            return;
+          }
+
+
+          var combinedQuery = null;
+          await category.selfAndDescendants(function(err, categories){
+            if (err){
+              res.sendStatus(400);
+            }
+            combinedQuery = {
+              $or: categories.map((category) =>{
+                  return {_category: `${category._id}`}
+                })
+            };
+
+            Item.count(combinedQuery,function(err, count){
+            if (err){
+                  console.log('get /api/category/:id/item/count: cannot find items');
+                  res.sendStatus(400);
+                  return;
+                }
+
+                res.json(count);
+              });
+
+          });
+
+        });
+
       app.get("/api/category/:id/item",
         async (req, res) => {
           console.log("get /api/category/:id/item:", req.params.id);
@@ -135,28 +173,43 @@ module.exports = (app) => {
             return;
           }
 
-          if (!req.query.pageNum || !req.query.perPage) {
-            await Item.find({_category: categoryId},function(err, items){
-              if (err){
-                console.log('get /api/category/:id/item: cannot find items');
-                res.sendStatus(400);
-                return;
-              }
-              res.json(items);
-            });
-          } else {
-            const limit = parseInt(req.query.perPage);
-            const page = parseInt(req.query.pageNum);
 
-            Item.paginate({_category: categoryId}, { page: page, limit: limit }, function(err, result) {
+          var combinedQuery = null;
+          await category.selfAndDescendants(function(err, categories){
+            if (err){
+              res.sendStatus(400);
+            }
+            combinedQuery = {
+              $or: categories.map((category) =>{
+                  return {_category: `${category._id}`}
+                })
+            };
+
+            if (!req.query.pageNum || !req.query.perPage) {
+
+              Item.find(combinedQuery,function(err, items){
               if (err){
-                console.log('get /api/category/:id/item: cannot find items');
-                res.sendStatus(400);
-                return;
-              }
-              res.json(result.docs);
-            });
-          }
+                    console.log('get /api/category/:id/item: cannot find items');
+                    res.sendStatus(400);
+                    return;
+                  }
+
+                  res.json(items);
+                });
+            } else {
+              const limit = parseInt(req.query.perPage);
+              const page = parseInt(req.query.pageNum);
+
+              Item.paginate(combinedQuery, { page: page, limit: limit }, function(err, result) {
+                if (err){
+                  console.log('get /api/category/:id/item: cannot find items');
+                  res.sendStatus(400);
+                  return;
+                }
+                res.json(result.docs);
+              });
+            }
+          });
 
         });
 }

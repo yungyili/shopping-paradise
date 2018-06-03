@@ -4,7 +4,7 @@
   "description": "Best place to buy and sell",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "nodemon --inspect=0.0.0.0:9229 index.js",
     "dev": "concurrently \"nodemon index.js\" \"npm run start --prefix client\" "
   },
   "author": "",
