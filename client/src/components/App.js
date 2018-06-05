@@ -1,10 +1,37 @@
+
 import React from 'react';
-import Button from '@material-ui/core/Button';
+import { BrowserRouter, Route } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import withRoot from '../withRoot';
+import Header from './Header';
+import BuyersLanding from './BuyersLanding';
+import Footer from './Footer';
 
-const App = () => (
-  <Button variant="raised" color="primary">
-    Hello World
-  </Button>
-);
+class App extends React.Component {
+  constructor(props){
+    super(props);
 
-export default App;
+  }
+
+  render() {
+    const { classes } = this.props;
+    console.log("App:ctor:", this.props);
+    return (
+      <BrowserRouter>
+        <div className={classes.root}>
+          <Header />
+          <Route exact path="/" component={BuyersLanding} />
+          <Route exact path="/category/:id(\w+)" component={BuyersLanding} />
+          <Footer />
+        </div>
+      </BrowserRouter>
+    );
+  }
+}
+
+App.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withRoot(withStyles({})(App));
