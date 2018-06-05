@@ -4,9 +4,21 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import Grid from '@material-ui/core/Grid';
 import {fetchCategory} from '../actions/categoryActions';
 import {fetchItem} from '../actions/itemActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
+
+const styles = theme => ({
+  root: {
+    flexGrow: 1,
+  },
+  image: {
+    padding: theme.spacing.unit,
+    textAlign: 'left',
+    color: theme.palette.text.secondary,
+  },
+});
 
 class BuyersLanding extends Component {
   componentDidMount(){
@@ -38,10 +50,24 @@ class BuyersLanding extends Component {
   }
 
   renderItems(){
+    const { classes, item } = this.props;
+    if (!item.content || !item.content.length){
+      return [<CircularProgress key={0} className={classes.progress} size={20} />];
+    }
+
     return (
-      <div>
-        items
-      </div>
+      <Grid container spacing={24}>
+        {
+          item.content.map(item=>{
+            return (
+              <Grid item className={classes.image} xs={6} sm={3} key={item._id} >
+                <img src={item.pictureUrl} height={180} style={{borderRadius: 5}} />
+                <div>${item.price}</div>
+              </Grid>
+            );
+        })}
+
+      </Grid>
     );
   }
 
@@ -66,9 +92,9 @@ BuyersLanding.propTypes = {
 };
 
 function mapStateToProps(state){
-  return {category: state.category};
+  return {category: state.category, item: state.item};
 }
 
 export default connect(mapStateToProps,{fetchCategory, fetchItem})(
-  withStyles({})(BuyersLanding)
+  withStyles(styles)(BuyersLanding)
 );
