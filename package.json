@@ -4,6 +4,7 @@
   "description": "Best place to buy and sell",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "nodemon --inspect=0.0.0.0:9229 index.js",
     "dev": "concurrently \"npm run server\" \"npm run start --prefix client\" ",
     "server": "nodemon index.js",
