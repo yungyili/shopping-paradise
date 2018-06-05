@@ -27,7 +27,7 @@ module.exports = app => {
       return;
     }
 
-    await new Category({
+    const newCategory = await new Category({
       title: title,
       parentId: parentId
     }).save();
@@ -39,8 +39,9 @@ module.exports = app => {
       return;
     }
 
-    await Category.rebuildTree(root, 1);
-    res.json(newCategory);
+    await Category.rebuildTree(root, 1, function(){
+      res.json(newCategory);
+    });
   });
 
   app.get('/api/category/:id' /*auth.authenticate(),*/, async (req, res) => {
