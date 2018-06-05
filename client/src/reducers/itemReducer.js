@@ -6,20 +6,26 @@ import {
 
 
 export default function itemReducer(state={content:{}, error:null}, action) {
-  var newState = undefined;
+
   switch(action.type){
   case FETCHING_ITEM:
-    return state;
+    return {
+      content: state.content,
+      error: null,
+      ongoing: true
+    }
   case FETCH_ITEM_OK:
     return {
       content: action.payload.content,
-      error: null
+      error: null,
+      ongoing: false
     };
 
   case FETCH_ITEM_FAIL:
     return {
       content: state.content,
-      error: action.payload.error
+      error: action.payload.error,
+      ongoing: false
     }
   default:
     return state;

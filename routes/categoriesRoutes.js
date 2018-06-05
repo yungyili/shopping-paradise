@@ -67,9 +67,16 @@ module.exports = app => {
           res.sendStatus(400);
           return;
         }
-        res.json({
-          category: categories,
-          path: path
+        category.siblings(function(err, sibling) {
+          if (err) {
+            res.sendStatus(400);
+            return;
+          }
+          res.json({
+            category: categories,
+            path: path,
+            sibling: sibling
+          });
         });
       });
     });

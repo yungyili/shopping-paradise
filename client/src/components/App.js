@@ -9,11 +9,6 @@ import BuyersLanding from './BuyersLanding';
 import Footer from './Footer';
 
 class App extends React.Component {
-  constructor(props){
-    super(props);
-
-  }
-
   render() {
     const { classes } = this.props;
     console.log("App:ctor:", this.props);

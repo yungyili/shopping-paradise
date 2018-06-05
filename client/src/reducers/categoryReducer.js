@@ -4,12 +4,8 @@ import {
   FETCH_CATEGORY_FAIL
 } from '../actions/actionTypes';
 
-
-
-
 export default function categoryReducer(state={content:{}, error:null}, action) {
   console.log("categoryReducer: ", action);
-  var newState = undefined;
   switch(action.type){
   case FETCHING_CATEGORY:
     return state;
