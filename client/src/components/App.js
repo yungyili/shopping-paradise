@@ -8,13 +8,20 @@ import Header from './Header';
 import BuyersLanding from './BuyersLanding';
 import Footer from './Footer';
 
+const styles = theme => ({
+  root: {
+    margin: '0 10%',
+    marginTop: '3%'
+  },
+});
+
 class App extends React.Component {
   render() {
     const { classes } = this.props;
     console.log("App:ctor:", this.props);
     return (
       <BrowserRouter>
-        <div className={classes.root}>
+        <div className={classes.root} >
           <Header />
           <Route exact path="/" component={BuyersLanding} />
           <Route exact path="/category/:id(\w+)" component={BuyersLanding} />
@@ -29,4 +36,4 @@ App.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withRoot(withStyles({})(App));
+export default withRoot(withStyles(styles)(App));

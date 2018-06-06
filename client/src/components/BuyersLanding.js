@@ -1,12 +1,15 @@
+import _ from 'lodash';
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import indigo from '@material-ui/core/colors/indigo';
 import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
+import Divider from '@material-ui/core/Divider';
 import {fetchCategory} from '../actions/categoryActions';
-import {fetchItem} from '../actions/itemActions';
+import {fetchItem, fetchItemCount} from '../actions/itemActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = theme => ({
@@ -21,13 +24,35 @@ const styles = theme => ({
   chip: {
     margin: theme.spacing.unit,
   },
+  divider: {
+    marginTop: '1%',
+    marginBottom: '1%'
+  },
+  items: {
+    marginTop: '3%'
+  },
+  pagination: {
+    direction: 'row',
+    justify: 'center'
+  }
 });
 
 class BuyersLanding extends Component {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      pageNum: 1,
+      perPage: 2,
+      categoryId: this.props.match.params.id? this.props.match.params.id: 'root'
+    }
+  }
+
   componentDidMount(){
     console.log("App:componentDidMount: ", this.props.match.params);
     this.props.fetchCategory(this.props.match.params.id);
-    this.props.fetchItem(this.props.match.params.id);
+    this.props.fetchItem(this.props.match.params.id, this.state.pageNum, this.state.perPage);
+    this.props.fetchItemCount(this.props.match.params.id);
   }
 
   renderBreadcrumb() {
@@ -54,7 +79,6 @@ class BuyersLanding extends Component {
 
   renderCategories(categories){
     const { classes } = this.props;
-    console.log("renderCategories: ", categories);
 
     return (
       categories.map((category)=>{
@@ -66,6 +90,77 @@ class BuyersLanding extends Component {
             href={`/category/${category._id}`}
           />);
       })
+    );
+  }
+
+  onPageClick(pageNum){
+    console.log("onPageClick: pageNum:", pageNum);
+    this.setState({
+      pageNum: pageNum
+    });
+    this.props.fetchItem(this.state.categoryId, pageNum, this.state.perPage);
+  }
+
+  getPaginationRange(){
+      const {pageNum, perPage} = this.state;
+      const totalPages = this.props.itemCount.content / perPage;
+
+      let startPage;
+      let endPage;
+
+      if (pageNum < 3) {
+        startPage = 1;
+        endPage = 5;
+      } else if (totalPages - pageNum < 3) {
+        startPage = totalPages - 4;
+        endPage = totalPages;
+      } else {
+        startPage = pageNum -2;
+        endPage = pageNum +2;
+      }
+      if (startPage < 1) {
+        startPage = 1;
+      }
+      if (endPage > totalPages) {
+        endPage = totalPages;
+      }
+      return _.range(startPage, endPage+1);
+  }
+
+  renderPagination(){
+    const { classes, itemCount, item } = this.props;
+    const { pageNum } = this.state;
+
+    if (!itemCount.content){
+      return (<div>...</div>);
+    }
+
+    const activeBtnStyle = {
+      fontSize: `120%`
+    }
+
+    return (
+      <Grid container className={classes.root}>
+        <Grid item xs={12}>
+          <Grid
+            container
+            spacing={16}
+            className={classes.pagination}
+          >
+            {this.getPaginationRange().map(value => {
+              return (<Grid key={value} item>
+                <button
+                  style={value===pageNum? activeBtnStyle:null}
+                  disabled={item.ongoing}
+                  onClick={()=>this.onPageClick(value)}
+                >
+                  {value}
+                </button>
+              </Grid>);
+            })}
+          </Grid>
+        </Grid>
+      </Grid>
     );
   }
 
@@ -87,10 +182,8 @@ class BuyersLanding extends Component {
     }
 
     if (children.length > 0) {
-      console.log("renderSiblingCategories: render children");
       return this.renderCategories(children);
     } else {
-      console.log("renderSiblingCategories: render sibling");
       return this.renderCategories(sibling);
     }
 
@@ -124,17 +217,22 @@ class BuyersLanding extends Component {
 
   render(){
     const { classes } = this.props;
-    console.log("BuyersLanding: render:", this.props.category);
     return (
         <div className={classes.root} style={{ paddingTop: 64 }}>
           <div>
             {this.renderBreadcrumb()}
           </div>
+          <Divider className={classes.divider} />
           <div>
             {this.renderSiblingOrChildrenCategories()}
           </div>
-          <div>
+          <Divider className={classes.divider} />
+          <div className={classes.items}>
             {this.renderItems()}
+          </div>
+          <Divider className={classes.divider} />
+          <div>
+            {this.renderPagination()}
           </div>
         </div>
       );
@@ -146,9 +244,9 @@ BuyersLanding.propTypes = {
 };
 
 function mapStateToProps(state){
-  return {category: state.category, item: state.item};
+  return {category: state.category, item: state.item, itemCount: state.itemCount};
 }
 
-export default connect(mapStateToProps,{fetchCategory, fetchItem})(
+export default connect(mapStateToProps,{fetchCategory, fetchItem, fetchItemCount})(
   withStyles(styles)(BuyersLanding)
 );
