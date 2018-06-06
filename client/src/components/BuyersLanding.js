@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 import indigo from '@material-ui/core/colors/indigo';
 import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
@@ -93,12 +94,30 @@ class BuyersLanding extends Component {
     );
   }
 
+  normalizedPageNum(i){
+    const {pageNum, perPage} = this.state;
+    const totalPages = this.props.itemCount.content / perPage;
+
+    if (i<1){
+      return 1;
+    } else if (i>totalPages) {
+      return totalPages;
+    } else {
+      return i;
+    }
+  }
+
   onPageClick(pageNum){
     console.log("onPageClick: pageNum:", pageNum);
+    const normalizedPageNum = this.normalizedPageNum(pageNum);
+
     this.setState({
-      pageNum: pageNum
+      pageNum: normalizedPageNum
     });
-    this.props.fetchItem(this.state.categoryId, pageNum, this.state.perPage);
+
+    if (normalizedPageNum != this.state.pageNum) {
+      this.props.fetchItem(this.state.categoryId, normalizedPageNum, this.state.perPage);
+    }
   }
 
   getPaginationRange(){
@@ -147,6 +166,24 @@ class BuyersLanding extends Component {
             spacing={16}
             className={classes.pagination}
           >
+            <Grid key='<<' item>
+              <button
+                disabled={item.ongoing}
+                onClick={()=>this.onPageClick(pageNum-5)}
+              >
+                {'<<'}
+              </button>
+            </Grid>
+
+            <Grid key='<' item>
+              <button
+                disabled={item.ongoing}
+                onClick={()=>this.onPageClick(pageNum-1)}
+              >
+                {'<'}
+              </button>
+            </Grid>
+
             {this.getPaginationRange().map(value => {
               return (<Grid key={value} item>
                 <button
@@ -158,6 +195,24 @@ class BuyersLanding extends Component {
                 </button>
               </Grid>);
             })}
+
+            <Grid key='>' item>
+              <button
+                disabled={item.ongoing}
+                onClick={()=>this.onPageClick(pageNum+1)}
+              >
+                {'>'}
+              </button>
+            </Grid>
+
+            <Grid key='>>' item>
+              <button
+                disabled={item.ongoing}
+                onClick={()=>this.onPageClick(pageNum+5)}
+              >
+                {'>>'}
+              </button>
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
