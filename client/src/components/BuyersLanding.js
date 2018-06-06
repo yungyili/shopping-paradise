@@ -63,6 +63,10 @@ class BuyersLanding extends Component {
       return [<CircularProgress key={0} className={classes.progress} size={20} />];
     }
 
+    path.sort(function(a,b){
+      return a.lft - b.lft;
+    })
+
     var ret = [];
     for(var i=0;i<path.length;i++){
       const url = `/category/${path[i]._id}`;
