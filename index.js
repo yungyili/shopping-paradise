@@ -12,13 +12,18 @@ require('./models/Item');
 mongoose.connect(keys.mongoURI);
 
 require('./services/googleAuth')(passport);
+require('./services/jwtAuth')(passport);
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(
+  cookieSession({
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    keys: [keys.cookieKey] // can use multiple keys
+  })
+);
 app.use(passport.initialize());
-app.use(cookieSession({
-    name: 'session',
-    keys: [keys.cookieKey]
-}));
-app.use(cookieParser());
+app.use(passport.session());
 
 require('./routes/authRoutes.js')(app, passport);
 require('./routes/usersRoutes.js')(app);

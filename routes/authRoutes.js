@@ -1,12 +1,28 @@
+const jwt = require("jwt-simple");
 const keys = require('../config/keys');
 const mongoose = require('mongoose');
 const User = mongoose.model('users');
 
 module.exports = (app, passport)=> {
-  app.get('/api/current_user',
-    async (req, res) => {
-      console.log("/api/current_user: req.user", req.user);
-      res.send(req.user);
+
+  /* For Google auth */
+  app.get('/api/auth/current_user',
+    (req, res, next) => {
+      console.log("/api/auth/current_user: google: req.user", req.user);
+      if (req.user){
+        res.send(req.user);
+        return;
+      }
+      next();
+    },
+    passport.authenticate('jwt', keys.jwtSession),
+    (req, res) => {
+      console.log("/api/auth/current_user: jwt: req.user", req.user);
+      if (req.user){
+        res.send(req.user);
+      } else {
+        res.send({});
+      }
     }
   );
 
@@ -18,7 +34,7 @@ module.exports = (app, passport)=> {
   app.get('/api/auth/google/callback',
     passport.authenticate('google'),
     (req, res) => {
-        res.redirect('/surveys');
+        res.redirect('/');
     }
   );
 
@@ -26,5 +42,28 @@ module.exports = (app, passport)=> {
     (req, res) => {
       req.logout();
       res.redirect('/');
+    });
+
+  /* For JWT auth */
+  app.post("/api/auth/jwt",
+    async (req, res) => {
+      console.log("post /api/auth/jwt: ", req.body);
+      if (req.body.email && req.body.password) {
+          const {email, password} = req.body;
+          const user = await User.findOne({'email':email, 'password':password}).exec();
+          if (user) {
+              var payload = {
+                  id: user.id
+              };
+              var token = jwt.encode(payload, keys.jwtSecret);
+              res.json({
+                  token: token
+              });
+          } else {
+              res.sendStatus(401);
+          }
+      } else {
+          res.sendStatus(401);
+      }
     });
 }

@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -6,6 +8,7 @@ import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import GoogleIcon from 'material-ui-next-community-icons/icons/google';
 import FacebookIcon from 'material-ui-next-community-icons/icons/facebook-box';
+import {jwtLogin} from '../actions/authActions';
 
 const styles = theme => ({
   loginForm: {
@@ -47,6 +50,7 @@ class LoginForm extends Component {
     const {email, password} = this.state;
     console.log('LoginForm submit: ', email, password);
     event.preventDefault();
+    this.props.jwtLogin({email, password}, this.props.history);
   }
 
   handleInputChange(event) {
@@ -104,5 +108,14 @@ LoginForm.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
+function mapStateToProps(state){
+  return {
+    auth: state.auth
+  };
+}
 
-export default withStyles(styles)(LoginForm);
+export default withStyles(styles)(
+  connect(mapStateToProps,{jwtLogin})(
+    withRouter(LoginForm)
+  )
+);
