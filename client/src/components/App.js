@@ -4,9 +4,8 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import withRoot from '../withRoot';
-import Header from './Header';
-import BuyersLanding from './BuyersLanding';
-import Footer from './Footer';
+import BuyersPage from './BuyersPage';
+import LoginForm from './LoginForm';
 
 const styles = theme => ({
   root: {
@@ -22,10 +21,9 @@ class App extends React.Component {
     return (
       <BrowserRouter>
         <div className={classes.root} >
-          <Header />
-          <Route exact path="/" component={BuyersLanding} />
-          <Route exact path="/category/:id(\w+)" component={BuyersLanding} />
-          <Footer />
+          <Route exact path="/" component={BuyersPage} />
+          <Route exact path="/category/:id(\w+)" component={BuyersPage} />
+          <Route exact path="/login" component={LoginForm} />
         </div>
       </BrowserRouter>
     );

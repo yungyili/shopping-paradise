@@ -4,8 +4,6 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
-import indigo from '@material-ui/core/colors/indigo';
 import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
@@ -99,7 +97,7 @@ class BuyersLanding extends Component {
   }
 
   normalizedPageNum(i){
-    const {pageNum, perPage} = this.state;
+    const {perPage} = this.state;
     const totalPages = Math.ceil(this.props.itemCount.content / perPage);
 
     if (i<1){
@@ -119,7 +117,7 @@ class BuyersLanding extends Component {
       pageNum: normalizedPageNum
     });
 
-    if (normalizedPageNum != this.state.pageNum) {
+    if (normalizedPageNum !== this.state.pageNum) {
       this.props.fetchItem(this.state.categoryId, normalizedPageNum, this.state.perPage);
     }
   }
