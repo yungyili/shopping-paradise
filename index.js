@@ -1,5 +1,8 @@
 const express = require('express');
+const passport = require('passport');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const mongoose = require('mongoose');
 const keys = require('./config/keys');
 const app = express();
@@ -8,14 +11,16 @@ require('./models/Category');
 require('./models/Item');
 mongoose.connect(keys.mongoURI);
 
-app.use(bodyParser.json());
+require('./services/googleAuth')(passport);
 
-app.get('/api', (req,res)=>{
-  res.send({
-    status: 'Service is alive!'
-  });
-});
+app.use(passport.initialize());
+app.use(cookieSession({
+    name: 'session',
+    keys: [keys.cookieKey]
+}));
+app.use(cookieParser());
 
+require('./routes/authRoutes.js')(app, passport);
 require('./routes/usersRoutes.js')(app);
 require('./routes/itemsRoutes.js')(app);
 require('./routes/categoriesRoutes.js')(app);

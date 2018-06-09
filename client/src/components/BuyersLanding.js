@@ -100,7 +100,7 @@ class BuyersLanding extends Component {
 
   normalizedPageNum(i){
     const {pageNum, perPage} = this.state;
-    const totalPages = this.props.itemCount.content / perPage;
+    const totalPages = Math.ceil(this.props.itemCount.content / perPage);
 
     if (i<1){
       return 1;
@@ -126,7 +126,7 @@ class BuyersLanding extends Component {
 
   getPaginationRange(){
       const {pageNum, perPage} = this.state;
-      const totalPages = this.props.itemCount.content / perPage;
+      const totalPages = Math.ceil(this.props.itemCount.content / perPage);
 
       let startPage;
       let endPage;
