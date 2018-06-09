@@ -14,3 +14,6 @@ export const LOGIN_FAIL = 'login_fail';
 export const FETCHING_CURRENT_USER = 'fetching_current_user';
 export const FETCH_CURRENT_USER_OK = 'fetch_current_user_ok';
 export const FETCH_CURRENT_USER_FAIL = 'fetch_current_user_fail';
+export const LOGGING_OUT = 'logging_out';
+export const LOGOUT_OK = 'logout_ok';
+export const LOGOUT_FAIL = 'logout_fail';

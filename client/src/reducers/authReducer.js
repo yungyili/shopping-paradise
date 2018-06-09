@@ -2,6 +2,9 @@ import {
   LOGGING_IN,
   LOGIN_OK,
   LOGIN_FAIL,
+  LOGGING_OUT,
+  LOGOUT_OK,
+  LOGOUT_FAIL,
   FETCHING_CURRENT_USER,
   FETCH_CURRENT_USER_OK,
   FETCH_CURRENT_USER_FAIL
@@ -48,6 +51,26 @@ export default function authReducer(state={content:null, error:null, ongoing:fal
       error: action.payload.error,
       ongoing: false
     }
+
+  case LOGGING_OUT:
+    return {
+      content: null,
+      error: null,
+      ongoing: true
+    }
+  case LOGOUT_OK:
+    return {
+      content: null,
+      error: null,
+      ongoing: false
+    }
+  case LOGOUT_FAIL:
+    return {
+      content: null,
+      error: action.payload.error,
+      ongoing: false
+    }
+
   default:
     return state;
   }

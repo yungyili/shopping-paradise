@@ -4,12 +4,13 @@ import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
-import {fetchCurrentUser} from '../actions/authActions';
+import {fetchCurrentUser, logout} from '../actions/authActions';
 
 const styles = {
   root: {
@@ -24,6 +25,9 @@ const styles = {
   },
   input: {
     marginRight: 20,
+  },
+  button: {
+    color: 'white'
   }
 };
 
@@ -34,18 +38,22 @@ class Header extends Component {
     this.props.fetchCurrentUser();
   }
 
+  LinkWrapper = ({ ...props }) => (
+    <Link {...props} />
+  )
+
   renderComponentsOnTheRight() {
     console.log("renderComponentsOnTheRight: auth=", this.props.auth);
 
-    const {auth} = this.props;
+    const {auth, classes} = this.props;
 
     if (auth.ongoing){
       return (<div>...</div>);
     } else {
       if (!auth.content){
-        return (<Link to="/login">Login</Link>);
+        return (<Button className={classes.button} to={"/login"} component={this.LinkWrapper}>Login</Button>)
       } else {
-        return (<a href="/api/auth/logout">Logout</a>);
+        return (<Button className={classes.button} onClick={()=>this.props.logout()}>Logout</Button>);
       }
     }
   }
@@ -86,4 +94,4 @@ function mapStateToProps(state){
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps,{fetchCurrentUser})(Header));
+  connect(mapStateToProps,{fetchCurrentUser, logout})(Header));

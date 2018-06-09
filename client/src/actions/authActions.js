@@ -3,6 +3,9 @@ import {
   LOGGING_IN,
   LOGIN_OK,
   LOGIN_FAIL,
+  LOGGING_OUT,
+  LOGOUT_OK,
+  LOGOUT_FAIL,
   FETCHING_CURRENT_USER,
   FETCH_CURRENT_USER_OK,
   FETCH_CURRENT_USER_FAIL
@@ -81,3 +84,37 @@ export const fetchCurrentUser = () =>
         });
       });
   };
+
+  export const logout = () =>
+    async (dispatch) => {
+
+      dispatch({
+        type: LOGGING_OUT,
+        payload: null
+      });
+
+      const token = localStorage.getItem('jwtToken');
+      localStorage.removeItem('jwtToken');
+
+      await axios.get('/api/auth/logout', {
+          headers: { Authorization: `JWT ${token}` }
+        })
+        .then((res)=>{
+          dispatch({
+            type: LOGOUT_OK,
+            payload: {
+              content: null,
+              error: null
+            }
+          });
+        })
+        .catch(e=>{
+          dispatch({
+            type: LOGOUT_FAIL,
+            payload: {
+              content: null,
+              error: e
+            }
+          });
+        });
+    };
