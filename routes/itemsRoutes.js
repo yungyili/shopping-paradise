@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Item = mongoose.model('items');
+const Category = mongoose.model('categories');
 
 module.exports = (app) => {
   app.post("/api/item",
@@ -23,10 +24,33 @@ module.exports = (app) => {
       res.json(newItem);
     });
 
-  app.get("/api/item/:id", /*auth.authenticate(),*/
+  app.get('/api/item/:id' /*auth.authenticate(),*/, 
     async (req, res) => {
-      const item = await Item.findOne({_id: req.params.id}).exec();
+      console.log('get /api/item:', req.params.id);
+      const itemId = req.params.id;
 
-      res.json(item);
+      const item = await Item.findOne({_id: itemId}).exec();
+      if (!item) {
+        res.sendStatus(400);
+        return;
+      }
+
+      const category = await Category.findOne({_id: item._category}).exec();
+      if (!item) {
+        res.sendStatus(400);
+        return;
+      }
+
+      await category.selfAndAncestors(function(err, path) {
+        if (err) {
+          res.sendStatus(400);
+          return;
+        }
+
+        res.json([{
+          ...item._doc,
+          path: path
+        }]);
+      });
     });
 }

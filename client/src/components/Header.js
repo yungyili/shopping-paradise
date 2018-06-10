@@ -78,6 +78,7 @@ class Header extends Component {
             {this.renderComponentsOnTheRight()}
           </Toolbar>
         </AppBar>
+        <div style={{ paddingTop: 64 }}></div>
       </div>
     );
   }

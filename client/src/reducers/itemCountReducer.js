@@ -5,7 +5,7 @@ import {
 } from '../actions/actionTypes';
 
 
-export default function itemReducer(state={content:0, error:null, ongoing:true}, action) {
+export default function itemReducer(state={content:null, error:null, ongoing:true}, action) {
 
   switch(action.type){
   case FETCHING_ITEM_COUNT:

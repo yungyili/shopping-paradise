@@ -1,15 +1,18 @@
 import _ from 'lodash';
 import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import {fetchCategory} from '../actions/categoryActions';
-import {fetchItem, fetchItemCount} from '../actions/itemActions';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import {fetchCategoryItem, fetchItemCount} from '../actions/itemActions';
+import BreadCumb from './BreadCumb';
+
 
 const styles = theme => ({
   root: {
@@ -50,34 +53,8 @@ class BuyersLanding extends Component {
   componentDidMount(){
     console.log("App:componentDidMount: ", this.props.match.params);
     this.props.fetchCategory(this.props.match.params.id);
-    this.props.fetchItem(this.props.match.params.id, this.state.pageNum, this.state.perPage);
+    this.props.fetchCategoryItem(this.props.match.params.id, this.state.pageNum, this.state.perPage);
     this.props.fetchItemCount(this.props.match.params.id);
-  }
-
-  renderBreadcrumb() {
-    const { classes, category:{content:{path}} } = this.props;
-
-    if (!path){
-      return [<CircularProgress key={0} className={classes.progress} size={20} />];
-    }
-
-    path.sort(function(a,b){
-      return a.lft - b.lft;
-    })
-
-    var ret = [];
-    for(var i=0;i<path.length;i++){
-      const url = `/category/${path[i]._id}`;
-
-      if (i<path.length-1){
-        ret.push((<a href={url} key={i*2}>{path[i].title}</a>));
-        ret.push((<ChevronRightIcon key={i*2+1}/>));
-      } else {
-        ret.push((<span href="" key={i*2}>{path[i].title}</span>));
-      }
-    }
-
-    return ret;
   }
 
   renderCategories(categories){
@@ -246,6 +223,10 @@ class BuyersLanding extends Component {
 
   }
 
+  LinkWrapper = ({ ...props }) => (
+    <Link {...props} />
+  );
+
   renderItems(){
     const { classes, item } = this.props;
     if (!item.content || !item.content.length){
@@ -261,8 +242,18 @@ class BuyersLanding extends Component {
         {
           item.content.map(item=>{
             return (
-              <Grid item className={classes.image} xs={6} sm={3} key={item._id} >
-                <img src={item.pictureUrl} alt={item.title} height={180} style={{borderRadius: 5}} />
+              <Grid item 
+                className={classes.image} xs={6} sm={3} 
+                key={item._id} 
+                to={`/item/${item._id}`}
+                component={this.LinkWrapper}
+              >
+                <img 
+                  src={item.pictureUrl} 
+                  alt={item.title} 
+                  height={180} 
+                  style={{borderRadius: 5}} 
+                />
                 <div>${item.price}</div>
               </Grid>
             );
@@ -275,9 +266,9 @@ class BuyersLanding extends Component {
   render(){
     const { classes } = this.props;
     return (
-        <div className={classes.root} style={{ paddingTop: 64 }}>
+        <div className={classes.root}>
           <div>
-            {this.renderBreadcrumb()}
+            <BreadCumb path={this.props.category.content.path}/>
           </div>
           <Divider className={classes.divider} />
           <div>
@@ -304,6 +295,6 @@ function mapStateToProps(state){
   return {category: state.category, item: state.item, itemCount: state.itemCount};
 }
 
-export default connect(mapStateToProps,{fetchCategory, fetchItem, fetchItemCount})(
+export default connect(mapStateToProps,{fetchCategory, fetchCategoryItem, fetchItemCount})(
   withStyles(styles)(BuyersLanding)
 );

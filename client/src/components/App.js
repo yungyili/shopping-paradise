@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import withRoot from '../withRoot';
 import BuyersPage from './BuyersPage';
 import LoginForm from './LoginForm';
+import Item from './Item';
 
 const styles = theme => ({
   root: {
@@ -23,6 +24,7 @@ class App extends React.Component {
         <div className={classes.root} >
           <Route exact path="/" component={BuyersPage} />
           <Route exact path="/category/:id(\w+)" component={BuyersPage} />
+          <Route exact path="/item/:id(\w+)" component={Item} />
           <Route exact path="/login" component={LoginForm} />
         </div>
       </BrowserRouter>

@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Header from './Header';
 import BuyersLanding from './BuyersLanding';
+import Item from './Item';
 import Footer from './Footer';
 
 class BuyersPage extends Component {
@@ -13,6 +14,7 @@ class BuyersPage extends Component {
         <Header />
         <Route exact path="/" component={BuyersLanding} />
         <Route exact path="/category/:id(\w+)" component={BuyersLanding} />
+        <Route exact path="/item/:id(\w+)" component={Item} />
         <Footer />
       </div>
     );
