@@ -29,7 +29,7 @@ const styles = theme => ({
 });
 
 const BreadCumb = (props) => {
-    const { classes, path } = props;
+    const { classes, path, tailLink } = props;
 
     if (!path){
       return <div>...</div>;
@@ -43,11 +43,15 @@ const BreadCumb = (props) => {
     for(var i=0;i<path.length;i++){
       const url = `/category/${path[i]._id}`;
 
-      if (i<path.length-1){
+      if (i === path.length-1){
+        if (tailLink){
+          ret.push((<a href={url} key={i*2}>{path[i].title}</a>));
+        } else {
+          ret.push((<span href="" key={i*2}>{path[i].title}</span>));
+        }
+      } else {
         ret.push((<a href={url} key={i*2}>{path[i].title}</a>));
         ret.push((<ChevronRightIcon key={i*2+1}/>));
-      } else {
-        ret.push((<span href="" key={i*2}>{path[i].title}</span>));
       }
     }
 

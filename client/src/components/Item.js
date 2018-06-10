@@ -8,6 +8,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
+import Button from '@material-ui/core/Button';
 import {fetchItem} from '../actions/itemActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import BreadCumb from './BreadCumb';
@@ -17,24 +18,18 @@ const styles = theme => ({
     flexGrow: 1,
   },
   image: {
-    padding: theme.spacing.unit,
-    textAlign: 'left',
-    color: theme.palette.text.secondary,
-  },
-  chip: {
-    margin: theme.spacing.unit,
+    width: '100%',
+    maxWidth: '300px',
+    height: 'auto'
   },
   divider: {
     marginTop: '1%',
     marginBottom: '1%'
   },
-  items: {
-    marginTop: '3%'
-  },
-  pagination: {
-    direction: 'row',
-    justify: 'center'
+  button: {
+    marginRight: '0.5em'
   }
+
 });
 
 class Item extends Component {
@@ -49,10 +44,33 @@ class Item extends Component {
   }
 
   renderItem(){
+    const { classes } = this.props;
+
     if (this.props.item.ongoing || !this.props.item.content[0]) {
       return (<div>...</div>);
     } else {
-      return <div>Item information</div>;
+      const item = this.props.item.content[0];
+      console.log("renderItem: item=", item);
+      return (
+        <div className={classes.root}>
+          <Grid container spacing={24}>
+            <Grid item xs={6}>
+              <img src={item.pictureUrl} className={classes.image}></img>
+            </Grid>
+            <Grid item xs={6}>
+              <h2>{item.title}</h2>
+              <p>{item.description}</p>
+              <h1>$ {item.price}</h1>
+              <Button variant="raised" color="secondary" className={classes.button}>
+                Add to wishlist
+              </Button>
+              <Button variant="raised" color="primary" className={classes.button}>
+                Buy
+              </Button>
+            </Grid>
+          </Grid>
+        </div>
+      );
     }
   }
 
@@ -60,7 +78,7 @@ class Item extends Component {
     if (this.props.item.ongoing || !this.props.item.content[0]) {
       return (<div>...</div>);
     } else {
-      return (<BreadCumb path={this.props.item.content[0].path}/>);
+      return (<BreadCumb path={this.props.item.content[0].path} tailLink={true} />);
     }
   }
 

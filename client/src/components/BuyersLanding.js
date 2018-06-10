@@ -95,7 +95,7 @@ class BuyersLanding extends Component {
     });
 
     if (normalizedPageNum !== this.state.pageNum) {
-      this.props.fetchItem(this.state.categoryId, normalizedPageNum, this.state.perPage);
+      this.props.fetchCategoryItem(this.state.categoryId, normalizedPageNum, this.state.perPage);
     }
   }
 
@@ -242,17 +242,17 @@ class BuyersLanding extends Component {
         {
           item.content.map(item=>{
             return (
-              <Grid item 
-                className={classes.image} xs={6} sm={3} 
-                key={item._id} 
+              <Grid item
+                className={classes.image} xs={6} sm={3}
+                key={item._id}
                 to={`/item/${item._id}`}
                 component={this.LinkWrapper}
               >
-                <img 
-                  src={item.pictureUrl} 
-                  alt={item.title} 
-                  height={180} 
-                  style={{borderRadius: 5}} 
+                <img
+                  src={item.pictureUrl}
+                  alt={item.title}
+                  height={180}
+                  style={{borderRadius: 5}}
                 />
                 <div>${item.price}</div>
               </Grid>
