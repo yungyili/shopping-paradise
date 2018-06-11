@@ -1,16 +1,16 @@
 import _ from 'lodash';
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
+import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import Chip from '@material-ui/core/Chip';
+import IconButton from '@material-ui/core/IconButton';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import {fetchItem} from '../actions/itemActions';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import BreadCumb from './BreadCumb';
 
 const styles = theme => ({
@@ -29,18 +29,61 @@ const styles = theme => ({
   button: {
     marginRight: '0.5em'
   }
-
 });
 
 class Item extends Component {
   constructor(props){
     super(props);
 
+    this.state = {
+      quantity: 0
+    };
+
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount(){
     console.log("Item:componentDidMount: ", this.props.match.params);
     this.props.fetchItem(this.props.match.params.id);
+  }
+
+  handleInputChange(event) {
+    const {name, value} = event.target;
+
+    this.setState({
+      [name]: value
+    });
+  }
+
+  handleSubmit(event) {
+    console.log('Item: buy: ' + this.state.quantity);
+    event.preventDefault();
+    if (this.state.quantity < 1){
+      return;
+    }
+
+    const item = this.props.item.content[0];
+    if (!item){
+      return;
+    }
+
+    this.props.history.push({
+      pathname: '/checkout/detail',
+      state: {
+        buyItems: [{
+          item: item,
+          quantity: this.state.quantity,
+        }],
+        from: 'itemPage'
+      }
+    });
+  }
+
+  renderNumberOptions(n){
+    return _.range(1,n+1).map(i => {
+      return (<option key={i} value={i}>{i}</option>);
+    });
   }
 
   renderItem(){
@@ -55,19 +98,31 @@ class Item extends Component {
         <div className={classes.root}>
           <Grid container spacing={24}>
             <Grid item xs={6}>
-              <img src={item.pictureUrl} className={classes.image}></img>
+              <img src={item.pictureUrl} alt={item.title} className={classes.image}></img>
             </Grid>
+
             <Grid item xs={6}>
-              <h2>{item.title}</h2>
-              <p>{item.description}</p>
-              <h1>$ {item.price}</h1>
-              <Button variant="raised" color="secondary" className={classes.button}>
-                Add to wishlist
-              </Button>
-              <Button variant="raised" color="primary" className={classes.button}>
-                Buy
-              </Button>
+              <form onSubmit={this.handleSubmit}>
+                <h2>{item.title}</h2>
+                <p>{item.description}</p>
+                <h1>$ {item.price}</h1>
+
+                <IconButton aria-label="Add to wish list" className={classes.button}>
+                  <FavoriteIcon />
+                </IconButton>
+                <Button variant="raised" color="secondary" className={classes.button}>
+                  <AddShoppingCartIcon />
+                </Button>
+                <Button type="submit" variant="raised" color="primary" className={classes.button}>
+                  Buy Now
+                </Button>
+                <select name="quantity" value={this.state.quantity} onChange={this.handleInputChange}>
+                  <option key={0} value={0} disabled>...</option>
+                  {this.renderNumberOptions(item.storage)}
+                </select>
+              </form>
             </Grid>
+
           </Grid>
         </div>
       );
@@ -108,5 +163,7 @@ function mapStateToProps(state){
 }
 
 export default connect(mapStateToProps,{fetchItem})(
-  withStyles(styles)(Item)
+  withStyles(styles)(
+    withRouter(Item)
+  )
 );

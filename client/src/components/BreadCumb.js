@@ -1,7 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = theme => ({
   root: {
@@ -29,7 +28,7 @@ const styles = theme => ({
 });
 
 const BreadCumb = (props) => {
-    const { classes, path, tailLink } = props;
+    const { path, tailLink } = props;
 
     if (!path){
       return <div>...</div>;

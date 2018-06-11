@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
@@ -67,7 +68,13 @@ class Header extends Component {
             <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
               <MenuIcon />
             </IconButton>
-            <Typography variant="title" color="inherit" className={classes.flex}>
+
+            <Typography
+              variant="title"
+              color="inherit"
+              className={classes.flex}
+              onClick={()=>{this.props.history.push('/')}}
+            >
               Shopping Paradise
             </Typography>
 
@@ -95,4 +102,6 @@ function mapStateToProps(state){
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps,{fetchCurrentUser, logout})(Header));
+  connect(mapStateToProps,{fetchCurrentUser, logout})(
+    withRouter(Header)
+  ));
