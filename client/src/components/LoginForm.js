@@ -30,9 +30,6 @@ const styles = theme => ({
   },
 });
 
-
-
-
 class LoginForm extends Component {
 
   constructor(props) {

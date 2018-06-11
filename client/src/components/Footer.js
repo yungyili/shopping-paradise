@@ -1,11 +1,40 @@
-import React from 'react';
+import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
+import { withTheme } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 
-const Footer = (props) => {
-  return (
-    <div>
-      Footer
-    </div>
-  );
+const styles = theme => ({
+  footer: {
+    marginTop: '4em',
+    height: '100px',
+    lineHeight: '100px',
+    textAlign: 'center',
+    verticalAlign: 'middle',
+    color: 'white',
+    width: '100%',
+  },
+  link : {
+    textDecoration: 'none'
+  }
+});
+
+class Footer extends Component {
+
+
+  render() {
+    const { classes } = this.props;
+    const { theme } = this.props;
+    const primaryText = theme.palette.text.primary;
+    const primaryColor = theme.palette.primary.main;
+    console.log("Footer: this.props", this.props);
+
+    return (
+      <div style={{backgroundColor: primaryColor}} className={classes.footer}>
+        &copy;2018 Shopping Paradise
+      </div>
+    );
+  }
 }
 
-export default Footer;
+export default withStyles(styles)(withTheme()(Footer));

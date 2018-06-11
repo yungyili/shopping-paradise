@@ -6,11 +6,19 @@ import Footer from './CheckoutFooter';
 import CheckoutDetail from './CheckoutDetail';
 import { withRouter } from 'react-router';
 
-class CheckoutPage extends Component {
+const styles = {
+  root: {
+    margin: '0',
+    marginTop: '3%',
+    maxWidth: '900px'
+  }
+};
 
+class CheckoutPage extends Component {
   render() {
+    const {classes} = this.props;
     return (
-      <div>
+      <div className={classes.root} >
         <Header />
           <Route exact path="/checkout/detail" component={CheckoutDetail} />
         <Footer />
@@ -20,6 +28,6 @@ class CheckoutPage extends Component {
 }
 
 
-export default withStyles()(
+export default withStyles(styles)(
   withRouter(CheckoutPage)
 );

@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
 import Table from '@material-ui/core/Table';
@@ -7,13 +8,16 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
-const styles = theme => ({
+const styles = {
   priceTag: { textAlign:'right'},
-  padding: { margin: '1em 0'}
-});
-
-
+  padding: { margin: '1em 0'},
+  button: {
+    marginRight: '1em'
+  }
+};
 
 class CheckoutDetail extends Component {
 
@@ -22,7 +26,9 @@ class CheckoutDetail extends Component {
 
     this.state = {
       items: this.props.location.state.buyItems,
-      payment: "stripe"
+      payment: "Stripe",
+      receiverName: '',
+      receiverAddress: ''
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -30,6 +36,7 @@ class CheckoutDetail extends Component {
 
   handleInputChange(event) {
     const {name, value} = event.target;
+    console.log("handleInputChange:", name, value);
 
     this.setState({
       [name]: value
@@ -78,7 +85,7 @@ class CheckoutDetail extends Component {
 
     return (
       <form>
-        {["stripe","VISA"].map(paymentType => {
+        {["Stripe","VISA"].map(paymentType => {
           return (
             <div key={paymentType}>
               <div className="radio">
@@ -97,6 +104,65 @@ class CheckoutDetail extends Component {
     );
   }
 
+  renderShipInformation(){
+    const {classes} = this.props;
+    return (
+      <form>
+        <div>
+          <TextField
+            label="Receiver Name"
+            name="receiverName"
+            className={classes.textField}
+            value={this.state.receiverName}
+            onChange={this.handleInputChange}
+            margin="normal"
+          />
+          <div className={classes.padding} />
+        </div>
+        <div>
+          <TextField
+            label="Receiver Address"
+            name="receiverAddress"
+            className={classes.textField}
+            value={this.state.receiverAddress}
+            onChange={this.handleInputChange}
+            margin="normal"
+          />
+          <div className={classes.padding} />
+        </div>
+      </form>
+    );
+  }
+
+  rederNavigationButtons(){
+    const {classes} = this.props;
+
+    return (
+      <div>
+        <Button
+          color="secondary"
+          variant="raised"
+          className={classes.button}
+          to={"/checkout/payment"} component={this.LinkWrapper}
+        >
+          Back
+        </Button>
+        <Button
+          color="primary"
+          variant="raised"
+          className={classes.button}
+          to={"/checkout/payment"} component={this.LinkWrapper}
+        >
+          Next
+        </Button>
+      </div>
+    );
+  }
+
+  LinkWrapper = ({ ...props }) => (
+    <Link {...props} />
+  )
+
   render() {
     console.log("CheckoutDetail: ", this.props.location);
     const {classes} = this.props;
@@ -113,6 +179,10 @@ class CheckoutDetail extends Component {
           <div className={classes.padding}></div>
         <Divider />
         <h3>Ship Information</h3>
+          {this.renderShipInformation()}
+        <div>
+          {this.rederNavigationButtons()}
+        </div>
       </div>
     );
   }

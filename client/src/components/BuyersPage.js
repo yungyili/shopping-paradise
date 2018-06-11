@@ -6,6 +6,10 @@ import BuyersLanding from './BuyersLanding';
 import Item from './Item';
 import Footer from './Footer';
 
+const styles = theme => ({
+
+});
+
 class BuyersPage extends Component {
   render() {
 
@@ -22,4 +26,4 @@ class BuyersPage extends Component {
 }
 
 
-export default withStyles()(BuyersPage);
+export default withStyles(styles)(BuyersPage);

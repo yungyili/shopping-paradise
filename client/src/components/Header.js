@@ -14,8 +14,8 @@ import SearchIcon from '@material-ui/icons/Search';
 import {fetchCurrentUser, logout} from '../actions/authActions';
 
 const styles = {
-  root: {
-    flexGrow: 1,
+  header: {
+    flexGrow: 1
   },
   flex: {
     flex: 1,
@@ -62,8 +62,8 @@ class Header extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.root}>
-        <AppBar position="fixed">
+      <div className={classes.header}>
+        <AppBar>
           <Toolbar>
             <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
               <MenuIcon />
