@@ -31,6 +31,8 @@ class CheckoutDetail extends Component {
       receiverAddress: ''
     };
 
+    this.state.items.map(item=>{item.isSelected=true;});
+
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 
@@ -44,8 +46,16 @@ class CheckoutDetail extends Component {
   }
 
   totalPrice(items){
-    return items.map(item=>item.item.price*item.quantity).reduce(function(acc, item) { return acc + item; });
+    return items
+            .map(item=>{ return item.isSelected? item.item.price*item.quantity: 0; })
+            .reduce(function(acc, item) { return acc + item; });
   }
+
+  handleItemToggle = (index) => {
+    var newItems = this.state.items;
+    newItems[index].isSelected = !this.state.items[index].isSelected;
+    this.setState({items: newItems});
+  };
 
   renderShoppingDetail() {
     const items = this.props.location.state.buyItems;
@@ -62,15 +72,20 @@ class CheckoutDetail extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.map(item => {
+            {items.map((item, index) => {
+              const crossOutStyle=item.isSelected? {}:{textDecoration:'line-through'};
+
               return (
                 <TableRow key={item.item._id}>
-                  <TableCell component="th" scope="row">
+                  <TableCell component="th" scope="row"
+                    style={crossOutStyle}
+                    onClick={()=>this.handleItemToggle(index)}
+                  >
                     {item.item.title}
                   </TableCell>
-                  <TableCell numeric>{item.item.price}</TableCell>
-                  <TableCell numeric>{item.quantity}</TableCell>
-                  <TableCell numeric>{item.item.price*item.quantity}</TableCell>
+                  <TableCell numeric style={crossOutStyle}>{item.item.price}</TableCell>
+                  <TableCell numeric style={crossOutStyle}>{item.quantity}</TableCell>
+                  <TableCell numeric style={crossOutStyle}>{item.item.price*item.quantity}</TableCell>
                 </TableRow>
               );
             })}
@@ -164,7 +179,7 @@ class CheckoutDetail extends Component {
   )
 
   render() {
-    console.log("CheckoutDetail: ", this.props.location);
+    console.log("CheckoutDetail: items=", this.state.items);
     const {classes} = this.props;
     return (
       <div>
