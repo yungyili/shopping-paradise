@@ -213,7 +213,7 @@ class CheckoutPage1 extends Component {
           className={classes.button}
           onClick={()=>{this.onNextPage()}}
         >
-          Next
+          Preview Order
         </Button>
       </div>
     );

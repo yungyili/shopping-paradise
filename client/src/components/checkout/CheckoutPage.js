@@ -1,11 +1,14 @@
 import React, {Component} from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import {connect} from 'react-redux';
 import Header from './CheckoutHeader';
 import Footer from './CheckoutFooter';
 import CheckoutPage1 from './CheckoutPage1';
 import CheckoutPage2 from './CheckoutPage2';
 import CheckoutPage3 from './CheckoutPage3';
 import { withRouter } from 'react-router';
+import {setCurrentOrder} from '../../actions/orderActions';
+
 
 const styles = {
   root: {
@@ -19,11 +22,22 @@ class CheckoutPage extends Component {
 
   constructor(props) {
     super(props)
-    this.nextPage = this.nextPage.bind(this)
-    this.previousPage = this.previousPage.bind(this)
+    this.nextPage = this.nextPage.bind(this);
+    this.previousPage = this.previousPage.bind(this);
+
+    const page = this.props.pageNum? this.props.pageNum: 1;
     this.state = {
-      page: 1
+      page: page
     }
+  }
+
+  componentWillUnmount(){
+    // this.props.setCurrentOrder({
+    //   items: null,
+    //   payment: null,
+    //   receiverName: null,
+    //   receiverAddress: null
+    // });
   }
 
   nextPage() {
@@ -49,7 +63,8 @@ class CheckoutPage extends Component {
   }
 }
 
-
 export default withStyles(styles)(
-  withRouter(CheckoutPage)
+  connect(null,{setCurrentOrder})(
+    withRouter(CheckoutPage)
+  )
 );

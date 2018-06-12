@@ -47,6 +47,7 @@ class Item extends Component {
   componentDidMount(){
     console.log("Item:componentDidMount: ", this.props.match.params);
     this.props.fetchItem(this.props.match.params.id);
+    this.props.fetchCurrentUser();
   }
 
   handleInputChange(event) {
@@ -156,7 +157,10 @@ Item.propTypes = {
 };
 
 function mapStateToProps(state){
-  return {item: state.item};
+  return {
+    item: state.item,
+    auth: state.auth
+  };
 }
 
 export default connect(mapStateToProps,{fetchItem, setCurrentOrder})(
