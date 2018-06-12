@@ -68,8 +68,8 @@ class CheckoutPage2 extends Component {
   }
 
   renderPayment(){
-    const {classes, order} = this.props;
-
+    const {order} = this.props;
+    
     return (
       <div>
         Pay by {order.payment}
@@ -78,7 +78,7 @@ class CheckoutPage2 extends Component {
   }
 
   renderShipInformation(){
-    const {classes, order} = this.props;
+    const {order} = this.props;
 
     return (
       <div>
