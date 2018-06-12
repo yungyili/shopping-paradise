@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Header from './CheckoutHeader';
 import Footer from './CheckoutFooter';
-import CheckoutDetail from './CheckoutDetail';
+import CheckoutPage1 from './CheckoutPage1';
 import { withRouter } from 'react-router';
 
 const styles = {
@@ -15,12 +15,30 @@ const styles = {
 };
 
 class CheckoutPage extends Component {
+
+  constructor(props) {
+    super(props)
+    this.nextPage = this.nextPage.bind(this)
+    this.previousPage = this.previousPage.bind(this)
+    this.state = {
+      page: 1
+    }
+  }
+  nextPage() {
+    this.setState({ page: this.state.page + 1 });
+  }
+
+  previousPage() {
+    this.setState({ page: this.state.page - 1 });
+  }
+
   render() {
-    const {classes} = this.props;
+    const {classes, onSubmit} = this.props;
+    const { page } = this.state;
     return (
       <div className={classes.root} >
         <Header />
-          <Route exact path="/checkout/detail" component={CheckoutDetail} />
+          {page === 1 && <CheckoutPage1 onNextPage={this.nextPage} />}
         <Footer />
       </div>
     );

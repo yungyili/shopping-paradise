@@ -11,6 +11,7 @@ import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import {fetchItem} from '../actions/itemActions';
+import {setCurrentOrder} from '../actions/orderActions';
 import BreadCumb from './BreadCumb';
 
 const styles = theme => ({
@@ -68,16 +69,12 @@ class Item extends Component {
       return;
     }
 
-    this.props.history.push({
-      pathname: '/checkout/detail',
-      state: {
-        buyItems: [{
-          item: item,
-          quantity: this.state.quantity,
-        }],
-        from: 'itemPage'
-      }
-    });
+    this.props.setCurrentOrder([{
+      item: item,
+      quantity: this.state.quantity,
+    }]);
+
+    this.props.history.push('/checkout');
   }
 
   renderNumberOptions(n){
@@ -162,7 +159,7 @@ function mapStateToProps(state){
   return {item: state.item};
 }
 
-export default connect(mapStateToProps,{fetchItem})(
+export default connect(mapStateToProps,{fetchItem, setCurrentOrder})(
   withStyles(styles)(
     withRouter(Item)
   )

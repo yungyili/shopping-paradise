@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
@@ -19,19 +20,20 @@ const styles = {
   }
 };
 
-class CheckoutDetail extends Component {
+class CheckoutPage1 extends Component {
 
   constructor(props){
     super(props);
 
+    const {items} = this.props.order;
+    items.map(item=>{item.isSelected=true;});
+
     this.state = {
-      items: this.props.location.state.buyItems,
+      items: items,
       payment: "Stripe",
       receiverName: '',
       receiverAddress: ''
     };
-
-    this.state.items.map(item=>{item.isSelected=true;});
 
     this.handleInputChange = this.handleInputChange.bind(this);
   }
@@ -58,8 +60,12 @@ class CheckoutDetail extends Component {
   };
 
   renderShoppingDetail() {
-    const items = this.props.location.state.buyItems;
+    const items = this.state.items;
     const {classes} = this.props;
+    if(!items || items.length <=0 ){
+      return <div>...</div>;
+    }
+
     return (
       <Paper className={classes.root}>
         <Table className={classes.table}>
@@ -179,14 +185,20 @@ class CheckoutDetail extends Component {
   )
 
   render() {
-    console.log("CheckoutDetail: items=", this.state.items);
+    console.log("CheckoutPage1: items=", this.state.items);
+    const items = this.state.items;
     const {classes} = this.props;
+
+    if(!items || items.length <=0 ){
+      return <div>...</div>;
+    }
+
     return (
       <div>
         <h3>Shopping Detail</h3>
           {this.renderShoppingDetail()}
           <div className={classes.priceTag}>
-            <h3>Total:{this.totalPrice(this.state.items)}</h3>
+            <h3>Total:{this.totalPrice(items)}</h3>
           </div>
         <Divider />
         <h3>Payment</h3>
@@ -203,4 +215,12 @@ class CheckoutDetail extends Component {
   }
 }
 
-export default withStyles(styles)(CheckoutDetail);
+function mapStateToProps(state){
+  return {
+    order: state.order
+  };
+}
+
+export default withStyles(styles)(
+  connect(mapStateToProps,null)(CheckoutPage1)
+);
