@@ -10,7 +10,7 @@ const styles = {
   }
 };
 
-class CheckoutPage_2 extends Component {
+class CheckoutPage3 extends Component {
 
   LinkWrapper = ({ ...props }) => (
     <Link {...props} />
@@ -38,7 +38,7 @@ class CheckoutPage_2 extends Component {
     const {classes} = this.props;
     return (
       <div className={classes.root} >
-        Page2
+        Page3
         {this.renderNavigationButtons()}
       </div>
     );
@@ -47,5 +47,5 @@ class CheckoutPage_2 extends Component {
 
 
 export default withStyles(styles)(
-  withRouter(CheckoutPage_2)
+  withRouter(CheckoutPage3)
 );

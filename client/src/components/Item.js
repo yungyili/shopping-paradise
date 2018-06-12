@@ -69,10 +69,10 @@ class Item extends Component {
       return;
     }
 
-    this.props.setCurrentOrder([{
+    this.props.setCurrentOrder({items: [{
       item: item,
       quantity: this.state.quantity,
-    }]);
+    }]});
 
     this.props.history.push('/checkout');
   }

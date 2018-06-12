@@ -9,7 +9,7 @@ const styles = {
   }
 };
 
-class CheckoutPage_2 extends Component {
+class CheckoutPage2 extends Component {
 
   onPreviousPage(){
     this.props.onPreviousPage();
@@ -57,5 +57,5 @@ class CheckoutPage_2 extends Component {
 
 
 export default withStyles(styles)(
-  withRouter(CheckoutPage_2)
+  withRouter(CheckoutPage2)
 );

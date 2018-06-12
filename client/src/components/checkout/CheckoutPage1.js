@@ -12,6 +12,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import {setCurrentOrder} from '../../actions/orderActions';
 
 const styles = {
   priceTag: { textAlign:'right'},
@@ -26,14 +27,19 @@ class CheckoutPage1 extends Component {
   constructor(props){
     super(props);
 
-    const {items} = this.props.order;
-    items.map(item=>{item.isSelected=true; return null;});
+    const {items, payment, receiverName, receiverAddress} = this.props.order;
+    items.map(item=>{
+      if(item.isSelected === undefined){
+        item.isSelected = true;
+      }
+      return null;
+    });
 
     this.state = {
       items: items,
-      payment: "Stripe",
-      receiverName: '',
-      receiverAddress: ''
+      payment: payment? payment:"Stripe",
+      receiverName: receiverName? receiverName: '',
+      receiverAddress: receiverAddress? receiverAddress: ''
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -157,6 +163,7 @@ class CheckoutPage1 extends Component {
   }
 
   onNextPage(){
+    this.props.setCurrentOrder(this.state);
     this.props.onNextPage();
   }
 
@@ -228,7 +235,7 @@ function mapStateToProps(state){
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps,null)(
+  connect(mapStateToProps,{setCurrentOrder})(
     withRouter(CheckoutPage1)
   )
 );

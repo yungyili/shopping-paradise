@@ -2,13 +2,11 @@ import {
   SET_CURRENT_ORDER
 } from './actionTypes';
 
-export const setCurrentOrder = (items) => {
+export const setCurrentOrder = ({items, payment, receiverName, receiverAddress}) => {
   console.log("setCurrentOrder: ", items);
 
   return {
     type: SET_CURRENT_ORDER,
-    payload: {
-      items: items
-    }
+    payload: {items, payment, receiverName, receiverAddress}
   };
 }
