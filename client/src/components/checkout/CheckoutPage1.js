@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
@@ -19,6 +20,9 @@ const styles = {
   padding: { margin: '1em 0'},
   button: {
     marginRight: '1em'
+  },
+  quantitySelect:{
+    textAlign: 'right'
   }
 };
 
@@ -66,6 +70,18 @@ class CheckoutPage1 extends Component {
     this.setState({items: newItems});
   };
 
+  handleQuantityChange = (index, quantity) => {
+    var newItems = this.state.items;
+    newItems[index].quantity = quantity;
+    this.setState({items: newItems});
+  }
+
+  renderNumberOptions = (n) => {
+    return _.range(1,n+1).map(i => {
+      return (<option key={i} value={i}>{i}</option>);
+    });
+  }
+
   renderShoppingDetail() {
     const items = this.state.items;
     const {classes} = this.props;
@@ -88,6 +104,7 @@ class CheckoutPage1 extends Component {
             {items.map((item, index) => {
               const crossOutStyle=item.isSelected? {}:{textDecoration:'line-through'};
 
+              console.log("CheckougPage1: item=", item);
               return (
                 <TableRow key={item.item._id}>
                   <TableCell component="th" scope="row"
@@ -97,7 +114,16 @@ class CheckoutPage1 extends Component {
                     {item.item.title}
                   </TableCell>
                   <TableCell numeric style={crossOutStyle}>{item.item.price}</TableCell>
-                  <TableCell numeric style={crossOutStyle}>{item.quantity}</TableCell>
+                  <TableCell className={classes.quantitySelect}>
+                    <select
+                      style={crossOutStyle}
+                      name="quantity"
+                      value={item.quantity}
+                      onChange={(event)=>this.handleQuantityChange( index, event.target.value)}
+                    >
+                      {this.renderNumberOptions(item.item.storage)}
+                    </select>
+                  </TableCell>
                   <TableCell numeric style={crossOutStyle}>{item.item.price*item.quantity}</TableCell>
                 </TableRow>
               );
