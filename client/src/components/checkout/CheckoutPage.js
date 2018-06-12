@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import { Route } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Header from './CheckoutHeader';
 import Footer from './CheckoutFooter';
 import CheckoutPage1 from './CheckoutPage1';
+import CheckoutPage2 from './CheckoutPage2';
+import CheckoutPage3 from './CheckoutPage3';
 import { withRouter } from 'react-router';
 
 const styles = {
@@ -24,6 +25,7 @@ class CheckoutPage extends Component {
       page: 1
     }
   }
+
   nextPage() {
     this.setState({ page: this.state.page + 1 });
   }
@@ -33,12 +35,14 @@ class CheckoutPage extends Component {
   }
 
   render() {
-    const {classes, onSubmit} = this.props;
+    const {classes} = this.props;
     const { page } = this.state;
     return (
       <div className={classes.root} >
         <Header />
           {page === 1 && <CheckoutPage1 onNextPage={this.nextPage} />}
+          {page === 2 && <CheckoutPage2 onNextPage={this.nextPage} onPreviousPage={this.previousPage} />}
+          {page === 3 && <CheckoutPage3 />}
         <Footer />
       </div>
     );

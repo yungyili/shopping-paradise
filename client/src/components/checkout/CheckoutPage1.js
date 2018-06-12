@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
+import { withRouter } from 'react-router';
 import { withStyles } from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
 import Table from '@material-ui/core/Table';
@@ -26,7 +27,7 @@ class CheckoutPage1 extends Component {
     super(props);
 
     const {items} = this.props.order;
-    items.map(item=>{item.isSelected=true;});
+    items.map(item=>{item.isSelected=true; return null;});
 
     this.state = {
       items: items,
@@ -155,7 +156,11 @@ class CheckoutPage1 extends Component {
     );
   }
 
-  rederNavigationButtons(){
+  onNextPage(){
+    this.props.onNextPage();
+  }
+
+  renderNavigationButtons(){
     const {classes} = this.props;
 
     return (
@@ -164,7 +169,8 @@ class CheckoutPage1 extends Component {
           color="secondary"
           variant="raised"
           className={classes.button}
-          to={"/checkout/payment"} component={this.LinkWrapper}
+          component={this.LinkWrapper}
+          to='/'
         >
           Back
         </Button>
@@ -172,7 +178,7 @@ class CheckoutPage1 extends Component {
           color="primary"
           variant="raised"
           className={classes.button}
-          to={"/checkout/payment"} component={this.LinkWrapper}
+          onClick={()=>{this.onNextPage()}}
         >
           Next
         </Button>
@@ -208,7 +214,7 @@ class CheckoutPage1 extends Component {
         <h3>Ship Information</h3>
           {this.renderShipInformation()}
         <div>
-          {this.rederNavigationButtons()}
+          {this.renderNavigationButtons()}
         </div>
       </div>
     );
@@ -222,5 +228,7 @@ function mapStateToProps(state){
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps,null)(CheckoutPage1)
+  connect(mapStateToProps,null)(
+    withRouter(CheckoutPage1)
+  )
 );

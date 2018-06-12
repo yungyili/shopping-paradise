@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import { withTheme } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
   footer: {
@@ -23,7 +21,6 @@ class Footer extends Component {
   render() {
     const { classes } = this.props;
     const { theme } = this.props;
-    const primaryText = theme.palette.text.primary;
     const primaryColor = theme.palette.primary.main;
     console.log("Footer: this.props", this.props);
 
