@@ -30,6 +30,9 @@ const handlePayment = async (req, res) => {
     res.sendStatus(400);
     return;
   }
+
+  //TODO: need to substract what in the order from storage
+  
   res.send(orderId);
 }
 

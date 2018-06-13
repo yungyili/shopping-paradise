@@ -44,7 +44,11 @@ export const handlePayment = ({_id}, token) =>
       payload: null
     });
 
-    await axios.post(`/api/order/${_id}/payment`, token)
+    const jwtToken = localStorage.getItem('jwtToken');
+
+    await axios.post(`/api/order/${_id}/payment`, token, {
+        headers: { Authorization: `JWT ${jwtToken}` }
+      })
       .then((res)=>{
         dispatch({
           type: PAY_OK,
@@ -79,7 +83,11 @@ export const handlePayment = ({_id}, token) =>
         payload: null
       });
 
-      await axios.post(`/api/order`, order)
+      const jwtToken = localStorage.getItem('jwtToken');
+
+      await axios.post(`/api/order`, order, {
+          headers: { Authorization: `JWT ${jwtToken}` }
+        })
         .then((res)=>{
           dispatch({
             type: MAKE_ORDER_OK,
