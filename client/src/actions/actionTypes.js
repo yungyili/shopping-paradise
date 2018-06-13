@@ -22,3 +22,4 @@ export const LOGOUT_OK = 'logout_ok';
 export const LOGOUT_FAIL = 'logout_fail';
 /* Internal */
 export const SET_CURRENT_ORDER = 'set_current_order';
+export const SET_LEAVE_FOR_LOGIN = 'set_leave_for_login';

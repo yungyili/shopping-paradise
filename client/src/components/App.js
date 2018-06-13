@@ -23,6 +23,7 @@ class App extends React.Component {
       <BrowserRouter>
         <div className={classes.root} >
           <Route exact path="/" component={BuyersPage} />
+          <Route exact path="/#" component={BuyersPage} />
           <Route exact path="/category/:id(\w+)" component={BuyersPage} />
           <Route exact path="/item/:id(\w+)" component={BuyersPage} />
           <Route exact path="/login" component={LoginForm} />

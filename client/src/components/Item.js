@@ -11,7 +11,7 @@ import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import {fetchItem} from '../actions/itemActions';
-import {setCurrentOrder} from '../actions/orderActions';
+import {setCurrentOrder, setLeaveForLogin} from '../actions/orderActions';
 import BreadCumb from './BreadCumb';
 
 const styles = theme => ({
@@ -47,7 +47,6 @@ class Item extends Component {
   componentDidMount(){
     console.log("Item:componentDidMount: ", this.props.match.params);
     this.props.fetchItem(this.props.match.params.id);
-    this.props.fetchCurrentUser();
   }
 
   handleInputChange(event) {
@@ -58,8 +57,24 @@ class Item extends Component {
     });
   }
 
+  renderBuyButton(){
+    const { classes, auth } = this.props;
+    const disabled = auth.ongoing;
+
+    return (
+      <Button type="submit" variant="raised"
+        color="primary" className={classes.button}
+        disabled={disabled}
+      >
+        Buy Now
+      </Button>
+    );
+  }
+
   handleSubmit(event) {
     console.log('Item: buy: ' + this.state.quantity);
+    const { auth } = this.props;
+
     event.preventDefault();
     if (this.state.quantity < 1){
       return;
@@ -75,7 +90,12 @@ class Item extends Component {
       quantity: this.state.quantity,
     }]});
 
-    this.props.history.push('/checkout');
+    if (!auth.content){
+      this.props.setLeaveForLogin(`/item/${this.props.match.params.id}`)
+      this.props.history.push('/login');
+    } else {
+      this.props.history.push('/checkout');
+    }
   }
 
   renderNumberOptions(n){
@@ -111,9 +131,7 @@ class Item extends Component {
                 <Button variant="raised" color="secondary" className={classes.button}>
                   <AddShoppingCartIcon />
                 </Button>
-                <Button type="submit" variant="raised" color="primary" className={classes.button}>
-                  Buy Now
-                </Button>
+                {this.renderBuyButton()}
                 <select name="quantity" value={this.state.quantity} onChange={this.handleInputChange}>
                   <option key={0} value={0} disabled>...</option>
                   {this.renderNumberOptions(item.storage)}
@@ -163,8 +181,9 @@ function mapStateToProps(state){
   };
 }
 
-export default connect(mapStateToProps,{fetchItem, setCurrentOrder})(
-  withStyles(styles)(
-    withRouter(Item)
-  )
-);
+export default
+  connect(mapStateToProps,{fetchItem, setCurrentOrder, setLeaveForLogin})(
+    withStyles(styles)(
+      withRouter(Item)
+    )
+  );
