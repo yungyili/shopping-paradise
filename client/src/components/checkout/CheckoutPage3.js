@@ -42,7 +42,9 @@ class CheckoutPage3 extends Component {
 
   onToken(token){
     console.log("stripe get token=", token);
-    this.props.handlePayment({orderId: '12345'}, token); //TODO: use real orderId
+    const {order} = this.props;
+
+    this.props.handlePayment(order.content, token);
     this.props.history.push('/');
   }
 
@@ -66,15 +68,20 @@ class CheckoutPage3 extends Component {
 
   renderPayment = () => {
     const {classes, order} = this.props;
+    console.log("CheckoutPage3: renderPayment: order=", order);
+
+    if (order.onging){
+      return <div>...</div>;
+    }
 
     return (
       <div>
-        Total: ${this.totalPrice(order.items)}
+        Total: ${this.totalPrice(order.content.items)}
         <div>
           <StripeCheckout
             stripeKey={process.env.REACT_APP_STRIPE_KEY}
             token={this.onToken}
-            amount={500} // cents //TODO: repalce with real number
+            amount={this.totalPrice(order.content.items)*100} // cents
             currency="USD"
           />
         </div>

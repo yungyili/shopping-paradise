@@ -32,7 +32,7 @@ class CheckoutPage1 extends Component {
   constructor(props){
     super(props);
 
-    const {items, payment, receiverName, receiverAddress} = this.props.order;
+    const {items, payment, receiverName, receiverAddress} = this.props.order.content;
     items.map(item=>{
       if(item.isSelected === undefined){
         item.isSelected = true;

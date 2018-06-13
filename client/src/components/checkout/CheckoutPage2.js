@@ -10,6 +10,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import {makeOrder} from '../../actions/orderActions';
 
 const styles = {
   priceTag: { textAlign:'right'},
@@ -72,7 +73,7 @@ class CheckoutPage2 extends Component {
 
     return (
       <div>
-        Pay by {order.payment}
+        Pay by {order.content.payment}
       </div>
     );
   }
@@ -84,11 +85,11 @@ class CheckoutPage2 extends Component {
       <div>
         <div>
           <h4>Receiver Name</h4>
-          <span>{order.receiverName}</span>
+          <span>{order.content.receiverName}</span>
         </div>
         <div>
           <h4>Receiver Address</h4>
-          <span>{order.receiverAddress}</span>
+          <span>{order.content.receiverAddress}</span>
         </div>
       </div>
     );
@@ -98,7 +99,15 @@ class CheckoutPage2 extends Component {
     this.props.onPreviousPage();
   }
 
+  getSelectedItems = (items) => {
+    return items.filter(item=>item.isSelected);
+  }
+
   onNextPage(){
+    const selectedItems = this.getSelectedItems(this.props.order.content.items);
+    const newOrder = this.props.order;
+    newOrder.items = selectedItems;
+    this.props.makeOrder(newOrder);
     this.props.onNextPage();
   }
 
@@ -128,7 +137,7 @@ class CheckoutPage2 extends Component {
   }
 
   render() {
-    const items = this.props.order.items;
+    const items = this.props.order.content.items;
     const {classes} = this.props;
 
     if(!items || items.length <=0 ){
@@ -162,7 +171,7 @@ function mapStateToProps(state){
   };
 }
 
-export default connect(mapStateToProps,null)(
+export default connect(mapStateToProps,{makeOrder})(
   withStyles(styles)(
     withRouter(CheckoutPage2)
 ));

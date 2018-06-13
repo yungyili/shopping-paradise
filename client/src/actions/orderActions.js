@@ -4,7 +4,10 @@ import {
   SET_LEAVE_FOR_LOGIN,
   PAYING,
   PAY_OK,
-  PAY_FAIL
+  PAY_FAIL,
+  MAKING_ORDER,
+  MAKE_ORDER_OK,
+  MAKE_ORDER_FAIL,
 } from './actionTypes';
 import { LEAVE_FOR_LOGIN } from '../constants/orders';
 
@@ -32,22 +35,22 @@ export const setLeaveForLogin = (path) => {
   };
 }
 
-export const handlePayment = ({orderId}, token) =>
+export const handlePayment = ({_id}, token) =>
   async (dispatch) => {
-    console.log("handlePayment: orderId=", orderId, ", token=", token);
+    console.log("handlePayment: _id=", _id, ", token=", token);
 
     dispatch({
       type: PAYING,
       payload: null
     });
 
-    await axios.post(`/api/order/${orderId}/payment`, token)
+    await axios.post(`/api/order/${_id}/payment`, token)
       .then((res)=>{
         dispatch({
           type: PAY_OK,
           payload: {
             content: {
-              orderId: orderId
+              _id: _id
             },
             error: null
           }
@@ -59,10 +62,41 @@ export const handlePayment = ({orderId}, token) =>
           type: PAY_FAIL,
           payload: {
             content: {
-              orderId: orderId
+              _id: _id
             },
             error: e
           }
         });
       });
   };
+
+  export const makeOrder = (order) =>
+    async (dispatch) => {
+      console.log("makeOrder: order=", order);
+
+      dispatch({
+        type: MAKING_ORDER,
+        payload: null
+      });
+
+      await axios.post(`/api/order`, order)
+        .then((res)=>{
+          dispatch({
+            type: MAKE_ORDER_OK,
+            payload: {
+              content: res.data,
+              error: null
+            }
+          });
+        })
+        .catch(e=>{
+          console.log("makeOrder: failed");
+          dispatch({
+            type: MAKE_ORDER_FAIL,
+            payload: {
+              content: null,
+              error: e
+            }
+          });
+        });
+    };

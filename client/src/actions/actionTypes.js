@@ -20,9 +20,15 @@ export const FETCH_CURRENT_USER_FAIL = 'fetch_current_user_fail';
 export const LOGGING_OUT = 'logging_out';
 export const LOGOUT_OK = 'logout_ok';
 export const LOGOUT_FAIL = 'logout_fail';
+
+/* Order */
 export const PAYING = 'paying';
 export const PAY_OK = 'pay_ok';
 export const PAY_FAIL = 'pay_fail';
+export const MAKING_ORDER = 'making_order';
+export const MAKE_ORDER_OK = 'make_order_ok';
+export const MAKE_ORDER_FAIL = 'make_order_fail';
+
 
 /* Internal */
 export const SET_CURRENT_ORDER = 'set_current_order';

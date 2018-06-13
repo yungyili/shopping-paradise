@@ -9,6 +9,7 @@ const app = express();
 require('./models/User');
 require('./models/Category');
 require('./models/Item');
+require('./models/Order');
 mongoose.connect(keys.mongoURI);
 
 require('./services/googleAuth')(passport);
