@@ -26,6 +26,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 require('./routes/authRoutes.js')(app, passport);
+require('./routes/orderRoutes.js')(app, passport);
 require('./routes/usersRoutes.js')(app);
 require('./routes/itemsRoutes.js')(app);
 require('./routes/categoriesRoutes.js')(app);

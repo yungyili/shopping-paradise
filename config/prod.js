@@ -4,5 +4,6 @@ module.exports = {
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
   cookieKey: process.env.COOKIE_KEY,
   jwtSecret: process.env.JWT_SECRET_KEY,
-  jwtSession: { session: false }
+  jwtSession: { session: false },
+  stripeSecretKey: process.env.STRIPE_SECRET_KEY
 };

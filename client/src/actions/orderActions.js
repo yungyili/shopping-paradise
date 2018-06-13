@@ -1,6 +1,10 @@
+import axios from 'axios';
 import {
   SET_CURRENT_ORDER,
-  SET_LEAVE_FOR_LOGIN
+  SET_LEAVE_FOR_LOGIN,
+  PAYING,
+  PAY_OK,
+  PAY_FAIL
 } from './actionTypes';
 import { LEAVE_FOR_LOGIN } from '../constants/orders';
 
@@ -27,3 +31,38 @@ export const setLeaveForLogin = (path) => {
     payload: path
   };
 }
+
+export const handlePayment = ({orderId}, token) =>
+  async (dispatch) => {
+    console.log("handlePayment: orderId=", orderId, ", token=", token);
+
+    dispatch({
+      type: PAYING,
+      payload: null
+    });
+
+    await axios.post(`/api/order/${orderId}/payment`, token)
+      .then((res)=>{
+        dispatch({
+          type: PAY_OK,
+          payload: {
+            content: {
+              orderId: orderId
+            },
+            error: null
+          }
+        });
+      })
+      .catch(e=>{
+        console.log("handlePayment: failed");
+        dispatch({
+          type: PAY_FAIL,
+          payload: {
+            content: {
+              orderId: orderId
+            },
+            error: e
+          }
+        });
+      });
+  };
