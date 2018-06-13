@@ -69,7 +69,7 @@ class CheckoutPage2 extends Component {
 
   renderPayment(){
     const {order} = this.props;
-    
+
     return (
       <div>
         Pay by {order.payment}

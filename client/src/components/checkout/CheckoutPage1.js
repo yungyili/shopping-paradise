@@ -14,6 +14,7 @@ import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import {setCurrentOrder} from '../../actions/orderActions';
+import {STRIPE} from '../../constants/orders';
 
 const styles = {
   priceTag: { textAlign:'right'},
@@ -41,7 +42,7 @@ class CheckoutPage1 extends Component {
 
     this.state = {
       items: items,
-      payment: payment? payment:"Stripe",
+      payment: payment? payment:STRIPE,
       receiverName: receiverName? receiverName: '',
       receiverAddress: receiverAddress? receiverAddress: ''
     };
@@ -139,7 +140,7 @@ class CheckoutPage1 extends Component {
 
     return (
       <form>
-        {["Stripe","VISA"].map(paymentType => {
+        {[STRIPE/*other payment types*/].map(paymentType => {
           return (
             <div key={paymentType}>
               <div className="radio">
