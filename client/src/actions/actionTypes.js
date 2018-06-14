@@ -29,6 +29,10 @@ export const MAKING_ORDER = 'making_order';
 export const MAKE_ORDER_OK = 'make_order_ok';
 export const MAKE_ORDER_FAIL = 'make_order_fail';
 
+/* User */
+export const FETCHING_USER_ITEMS = 'fetching_user_items';
+export const FETCH_USER_ITEMS_OK = 'fetch_user_items_ok';
+export const FETCH_USER_ITEMS_FAIL = 'fetch_user_items_fail';
 
 /* Internal */
 export const SET_CURRENT_ORDER = 'set_current_order';

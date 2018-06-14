@@ -16,7 +16,8 @@ const styles = theme => ({
 
 class BuyersPage extends Component {
   componentDidMount(){
-    const path = this.props.order.leaveForLogin;
+    const path = this.props.order.content[LEAVE_FOR_LOGIN];
+    console.log("BuyersPage: componentDidMount: leave for login path=", path);
     const pathInCookie = localStorage.getItem(LEAVE_FOR_LOGIN);
 
     if (path || pathInCookie){
@@ -24,7 +25,7 @@ class BuyersPage extends Component {
       this.props.setLeaveForLogin(null);
     }
   }
-  
+
   render() {
 
     return (

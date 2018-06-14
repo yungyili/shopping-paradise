@@ -12,7 +12,6 @@ import IconButton from '@material-ui/core/IconButton';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import PersonIcon from '@material-ui/icons/Person';
-import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import {fetchCurrentUser, logout} from '../actions/authActions';
 
@@ -61,8 +60,8 @@ class Header extends Component {
         return (<IconButton className={classes.button} onClick={this.onLogin}><PersonIcon /></IconButton>)
       } else {
         return ([
-          <IconButton className={classes.button} aria-label="Shopping Cart"><ShoppingCartIcon /></IconButton>,
-          <IconButton className={classes.button} onClick={()=>this.props.logout()}><ExitToAppIcon /></IconButton>
+          <IconButton key={0} className={classes.button} aria-label="Shopping Cart"><ShoppingCartIcon /></IconButton>,
+          <IconButton key={1} className={classes.button} onClick={()=>this.props.logout()}><ExitToAppIcon /></IconButton>
         ]);
       }
     }

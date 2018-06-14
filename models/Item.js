@@ -9,7 +9,9 @@ const ItemSchema = new Schema({
   price: {type: Number, default: 0},
   storage: {type: Number, default: 0},
   _user: {type: Schema.Types.ObjectId, ref: 'users'},
-  _category: {type: Schema.Types.ObjectId, ref: 'categories'}
+  _category: {type: Schema.Types.ObjectId, ref: 'categories'},
+  isBuyable: {type: Boolean, default: false},
+  hasBeenPublished: {type: Boolean, default: false}
 });
 
 ItemSchema.plugin(mongoosePaginate);

@@ -21,7 +21,7 @@ export const setCurrentOrder = ({items, payment, receiverName, receiverAddress})
 }
 
 export const setLeaveForLogin = (path) => {
-  console.log("setCurrentOrder: ", path);
+  console.log("setLeaveForLogin: ", path);
 
   if (path){
     localStorage.setItem(LEAVE_FOR_LOGIN, path);

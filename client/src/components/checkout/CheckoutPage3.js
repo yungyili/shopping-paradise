@@ -67,7 +67,7 @@ class CheckoutPage3 extends Component {
   }
 
   renderPayment = () => {
-    const {classes, order} = this.props;
+    const {order} = this.props;
     console.log("CheckoutPage3: renderPayment: order=", order);
 
     if (order.onging){

@@ -8,7 +8,7 @@ import {
 import { LEAVE_FOR_LOGIN } from '../constants/orders';
 
 const makeEmptyOrder = () => {
-  return {content:{items:[]}, ongoing:false, error:null};
+  return {content:{items:[], LEAVE_FOR_LOGIN:null}, ongoing:false, error:null};
 }
 
 export default function currentOrderReducer(state=makeEmptyOrder(), action) {
@@ -26,13 +26,9 @@ export default function currentOrderReducer(state=makeEmptyOrder(), action) {
     }
   case SET_LEAVE_FOR_LOGIN:
   {
-    let newState = state;
-    newState[LEAVE_FOR_LOGIN] = action.payload;
-    return {
-      content: newState,
-      error: null,
-      ongoing: false
-    };
+    let newState = {...state};
+    newState.content[LEAVE_FOR_LOGIN] = action.payload;
+    return newState;
   }
   case MAKING_ORDER:
     console.log("currentOrderReducer: making order, state=", state);

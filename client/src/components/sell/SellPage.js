@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import { Route } from 'react-router-dom';
 import {connect} from 'react-redux';
 import { withRouter } from 'react-router';
 import { withStyles } from '@material-ui/core/styles';
@@ -52,8 +51,6 @@ class SellPage extends Component {
               </Grid>
             </Grid>
           </div>
-
-
         )
       } else {
         return (<SellMainPage />);
