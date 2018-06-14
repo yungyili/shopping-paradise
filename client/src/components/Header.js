@@ -9,6 +9,9 @@ import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import PersonIcon from '@material-ui/icons/Person';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import {fetchCurrentUser, logout} from '../actions/authActions';
@@ -43,6 +46,10 @@ class Header extends Component {
     <Link {...props} />
   )
 
+  onLogin = () => {
+    this.props.history.push('/login');
+  }
+
   renderLoginButton(){
     console.log("renderLoginButton: auth=", this.props.auth);
     const {auth, classes} = this.props;
@@ -51,9 +58,12 @@ class Header extends Component {
       return (<Button className={classes.button}>...</Button>);
     } else {
       if (!auth.content){
-        return (<Button className={classes.button} to={"/login"} component={this.LinkWrapper}>Login</Button>)
+        return (<IconButton className={classes.button} onClick={this.onLogin}><PersonIcon /></IconButton>)
       } else {
-        return (<Button className={classes.button} onClick={()=>this.props.logout()}>Logout</Button>);
+        return ([
+          <IconButton className={classes.button} aria-label="Shopping Cart"><ShoppingCartIcon /></IconButton>,
+          <IconButton className={classes.button} onClick={()=>this.props.logout()}><ExitToAppIcon /></IconButton>
+        ]);
       }
     }
   }
