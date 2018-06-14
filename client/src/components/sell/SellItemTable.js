@@ -14,11 +14,13 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import EditIcon from '@material-ui/icons/Edit';
+import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import {fetchUserItems} from '../../actions/userActions';
 
@@ -107,7 +109,11 @@ const toolbarStyles = theme => ({
     flex: '1 1 100%',
   },
   actions: {
-    color: theme.palette.text.secondary,
+    flex: '1 1 100%',
+    color: theme.palette.text.secondary
+  },
+  action: {
+
   },
   title: {
     flex: '0 0 auto',
@@ -134,22 +140,39 @@ let EnhancedTableToolbar = props => {
           </Typography>
         )}
       </div>
-      <div className={classes.spacer} />
-      <div className={classes.actions}>
-        {numSelected > 0 ? (
-          <Tooltip title="Delete">
-            <IconButton aria-label="Delete">
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        ) : (
-          <Tooltip title="Filter list">
-            <IconButton aria-label="Filter list">
-              <FilterListIcon />
-            </IconButton>
-          </Tooltip>
+
+      <Grid container className={classes.actions}
+          direction="row"
+          justify="flex-end"
+      >
+        {numSelected === 1 && (
+          <Grid item className={classes.action}>
+            <Tooltip title="Edit">
+              <IconButton aria-label="Edit">
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+          </Grid>
         )}
-      </div>
+        {numSelected > 0 && (
+          <Grid item className={classes.action}>
+            <Tooltip title="Delete">
+              <IconButton aria-label="Delete">
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          </Grid>
+        )}
+        {numSelected == 0 && (
+          <Grid item className={classes.action}>
+            <Tooltip title="Add Item">
+              <IconButton aria-label="add-item">
+                <PlaylistAddIcon />
+              </IconButton>
+            </Tooltip>
+          </Grid>
+        )}
+      </Grid>
     </Toolbar>
   );
 };
