@@ -22,11 +22,6 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import {fetchUserItems} from '../../actions/userActions';
 
-let counter = 0;
-function createData(name, calories, fat, carbs, protein) {
-  counter += 1;
-  return { id: counter, name, calories, fat, carbs, protein };
-}
 
 const columnData = [
   { id: 'title', numeric: false, disablePadding: true, label: 'title' },
@@ -194,12 +189,10 @@ class EnhancedTable extends React.Component {
   }
 
   updateUserStateByProps = (nextProps) => {
-    console.log("updateUserStateByProps: EnhancedTable: nextProps=",JSON.stringify(nextProps));
-    this.setState({items: nextProps.user.content.items},()=>{console.log("updateUserStateByProps: state has been set")});
+    this.setState({items: nextProps.user.content.items.slice()});
   };
 
   componentWillReceiveProps(nextProps){
-    console.log("componentWillReceiveProps: EnhancedTable: nextProps=", JSON.stringify(nextProps));
     if (this.props.user !== nextProps.user) {
       this.updateUserStateByProps(nextProps);
     }
@@ -269,8 +262,6 @@ class EnhancedTable extends React.Component {
     const { items, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
 
-    console.log("EnhancedTable: render: this.state=", this.state);
-    console.log("EnhancedTable: render: user=", user);
 
     return (
       <Paper className={classes.root}>
@@ -286,16 +277,16 @@ class EnhancedTable extends React.Component {
               rowCount={items.length}
             />
             <TableBody>
-              {items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
-                const isSelected = this.isSelected(n.id);
+              {items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n, id) => {
+                const isSelected = this.isSelected(id);
                 return (
                   <TableRow
                     hover
-                    onClick={event => this.handleClick(event, n.id)}
+                    onClick={event => this.handleClick(event, id)}
                     role="checkbox"
                     aria-checked={isSelected}
                     tabIndex={-1}
-                    key={n.id}
+                    key={id}
                     selected={isSelected}
                   >
                     <TableCell padding="checkbox">
@@ -307,8 +298,8 @@ class EnhancedTable extends React.Component {
                     <TableCell>{n.description}</TableCell>
                     <TableCell numeric>{n.price}</TableCell>
                     <TableCell numeric>{n.storage}</TableCell>
-                    <TableCell>{n.category}</TableCell>
-                    <TableCell>{n.isBuyable}</TableCell>
+                    <TableCell>{n._category}</TableCell>
+                    <TableCell>{n.isBuyable? "Yes":"No"}</TableCell>
                   </TableRow>
                 );
               })}
