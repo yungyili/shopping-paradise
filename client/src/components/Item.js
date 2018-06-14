@@ -91,7 +91,7 @@ class Item extends Component {
     }]});
 
     if (!auth.content){
-      this.props.setLeaveForLogin(`/item/${this.props.match.params.id}`)
+      this.props.setLeaveForLogin(this.props.location.pathname);
       this.props.history.push('/login');
     } else {
       this.props.history.push('/checkout');

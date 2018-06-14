@@ -7,6 +7,7 @@ import withRoot from '../withRoot';
 import BuyersPage from './BuyersPage';
 import LoginForm from './LoginForm';
 import CheckoutPage from './checkout/CheckoutPage';
+import SellPage from './sell/SellPage';
 
 const styles = theme => ({
   root: {
@@ -28,6 +29,7 @@ class App extends React.Component {
           <Route exact path="/item/:id(\w+)" component={BuyersPage} />
           <Route exact path="/login" component={LoginForm} />
           <Route path="/checkout" component={CheckoutPage} />
+          <Route path="/sell" component={SellPage} />
         </div>
       </BrowserRouter>
     );

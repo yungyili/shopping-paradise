@@ -11,7 +11,8 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
-import {fetchCurrentUser, logout} from '../actions/authActions';
+import {fetchCurrentUser, logout} from '../../actions/authActions';
+import {setLeaveForLogin} from '../../actions/orderActions';
 
 const styles = {
   header: {
@@ -33,7 +34,7 @@ const styles = {
 };
 
 
-class Header extends Component {
+class SellHeader extends Component {
 
   componentDidMount(){
     this.props.fetchCurrentUser();
@@ -43,6 +44,11 @@ class Header extends Component {
     <Link {...props} />
   )
 
+  onLogin = () => {
+    this.props.setLeaveForLogin(this.props.location.pathname);
+    this.props.history.push('/login');
+  }
+
   renderLoginButton(){
     console.log("renderLoginButton: auth=", this.props.auth);
     const {auth, classes} = this.props;
@@ -51,7 +57,7 @@ class Header extends Component {
       return (<Button className={classes.button}>...</Button>);
     } else {
       if (!auth.content){
-        return (<Button className={classes.button} to={"/login"} component={this.LinkWrapper}>Login</Button>)
+        return (<Button className={classes.button} onClick={this.onLogin} >Login</Button>)
       } else {
         return (<Button className={classes.button} onClick={()=>this.props.logout()}>Logout</Button>);
       }
@@ -62,7 +68,7 @@ class Header extends Component {
     const {classes} = this.props;
     return (
       <div>
-        <Button className={classes.button} to={"/sell"} component={this.LinkWrapper}>Sell</Button>
+        <Button className={classes.button} to={"/"} component={this.LinkWrapper}>buy</Button>
         {this.renderLoginButton()}
       </div>
     );
@@ -82,7 +88,7 @@ class Header extends Component {
               variant="title"
               color="inherit"
               className={classes.flex}
-              onClick={()=>{this.props.history.push('/')}}
+              onClick={()=>{this.props.history.push('/sell')}}
             >
               Shopping Paradise
             </Typography>
@@ -100,7 +106,7 @@ class Header extends Component {
   }
 }
 
-Header.propTypes = {
+SellHeader.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
@@ -111,6 +117,6 @@ function mapStateToProps(state){
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps,{fetchCurrentUser, logout})(
-    withRouter(Header)
+  connect(mapStateToProps,{fetchCurrentUser, setLeaveForLogin, logout})(
+    withRouter(SellHeader)
   ));
