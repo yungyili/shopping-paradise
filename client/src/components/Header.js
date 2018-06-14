@@ -74,10 +74,6 @@ class Header extends Component {
       <div className={classes.header}>
         <AppBar>
           <Toolbar>
-            <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
-              <MenuIcon />
-            </IconButton>
-
             <Typography
               variant="title"
               color="inherit"

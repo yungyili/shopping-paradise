@@ -47,7 +47,16 @@ class LoginForm extends Component {
     const {email, password} = this.state;
     console.log('LoginForm submit: ', email, password);
     event.preventDefault();
+    if (this.props.handleLeaveForLogin){
+      this.props.handleLeaveForLogin();
+    }
     this.props.jwtLogin({email, password}, this.props.history);
+  }
+
+  onGoogleLogin = () => {
+    if (this.props.handleLeaveForLogin){
+      this.props.handleLeaveForLogin();
+    }
   }
 
   handleInputChange(event) {
@@ -67,7 +76,7 @@ class LoginForm extends Component {
           Sing Up
         </Button>
         <Divider />
-        <Button variant="raised" href="/api/auth/google" color="secondary" className={classes.button}>
+        <Button variant="raised" href="/api/auth/google" onClick={this.onGoogleLogin} color="secondary" className={classes.button}>
           Login with Google <GoogleIcon className={classes.icon}/>
         </Button>
         <Button variant="raised" href="/api/auth/google" color="secondary" className={classes.button}>

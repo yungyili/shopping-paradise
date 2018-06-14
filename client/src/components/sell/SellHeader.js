@@ -57,7 +57,7 @@ class SellHeader extends Component {
       return (<Button className={classes.button}>...</Button>);
     } else {
       if (!auth.content){
-        return (<Button className={classes.button} onClick={this.onLogin} >Login</Button>)
+        return null;
       } else {
         return (<Button className={classes.button} onClick={()=>this.props.logout()}>Logout</Button>);
       }
@@ -80,10 +80,6 @@ class SellHeader extends Component {
       <div className={classes.header}>
         <AppBar>
           <Toolbar>
-            <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
-              <MenuIcon />
-            </IconButton>
-
             <Typography
               variant="title"
               color="inherit"
@@ -93,10 +89,6 @@ class SellHeader extends Component {
               Shopping Paradise
             </Typography>
 
-            <div>
-              <SearchIcon className={classes.icon} />
-              <input type="text" placeholder="Search.." />
-            </div>
             {this.renderComponentsOnTheRight()}
           </Toolbar>
         </AppBar>
