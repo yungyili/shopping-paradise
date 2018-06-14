@@ -8,6 +8,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import {fetchCategory} from '../actions/categoryActions';
 import {fetchCategoryItem, fetchItemCount} from '../actions/itemActions';
 import BreadCumb from './BreadCumb';
@@ -263,7 +264,12 @@ class BuyersLanding extends Component {
   }
 
   render(){
-    const { classes } = this.props;
+    const { classes, category, item, itemCount } = this.props;
+
+    if (category.ongoing || item.ongoing || itemCount.ongoing){
+      return (<LinearProgress color="secondary" />)
+    }
+
     return (
         <div className={classes.root}>
           <div>

@@ -21,8 +21,11 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
+import red from '@material-ui/core/colors/red';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import {fetchUserItems} from '../../actions/userActions';
+
 
 
 const columnData = [
@@ -158,7 +161,7 @@ let EnhancedTableToolbar = props => {
           <Grid item className={classes.action}>
             <Tooltip title="Delete">
               <IconButton aria-label="Delete">
-                <DeleteIcon />
+                <DeleteIcon style={{color:red[900]}}/>
               </IconButton>
             </Tooltip>
           </Grid>
@@ -243,7 +246,7 @@ class EnhancedTable extends React.Component {
 
   handleSelectAllClick = (event, checked) => {
     if (checked) {
-      this.setState({ selected: this.state.items.map(n => n.id) });
+      this.setState({ selected: this.state.items.map((n, id) => id) });
       return;
     }
     this.setState({ selected: [] });
@@ -287,68 +290,71 @@ class EnhancedTable extends React.Component {
 
 
     return (
-      <Paper className={classes.root}>
-        <EnhancedTableToolbar numSelected={selected.length} />
-        <div className={classes.tableWrapper}>
-          <Table className={classes.table} aria-labelledby="tableTitle">
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={this.handleSelectAllClick}
-              onRequestSort={this.handleRequestSort}
-              rowCount={items.length}
-            />
-            <TableBody>
-              {items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n, id) => {
-                const isSelected = this.isSelected(id);
-                return (
-                  <TableRow
-                    hover
-                    onClick={event => this.handleClick(event, id)}
-                    role="checkbox"
-                    aria-checked={isSelected}
-                    tabIndex={-1}
-                    key={id}
-                    selected={isSelected}
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox checked={isSelected} />
-                    </TableCell>
-                    <TableCell component="th" scope="row" padding="none">
-                      {n.title}
-                    </TableCell>
-                    <TableCell>{n.description}</TableCell>
-                    <TableCell numeric>{n.price}</TableCell>
-                    <TableCell numeric>{n.storage}</TableCell>
-                    <TableCell>{n._category}</TableCell>
-                    <TableCell>{n.isBuyable? "Yes":"No"}</TableCell>
+      <div>
+        <LinearProgress color="secondary" style={{visibility: user.ongoing? 'visible':'hidden'}} />
+        <Paper className={classes.root} style={{marginTop: '0'}}>
+          <EnhancedTableToolbar numSelected={selected.length} />
+          <div className={classes.tableWrapper}>
+            <Table className={classes.table} aria-labelledby="tableTitle">
+              <EnhancedTableHead
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={this.handleSelectAllClick}
+                onRequestSort={this.handleRequestSort}
+                rowCount={items.length}
+              />
+              <TableBody>
+                {items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n, id) => {
+                  const isSelected = this.isSelected(id);
+                  return (
+                    <TableRow
+                      hover
+                      onClick={event => this.handleClick(event, id)}
+                      role="checkbox"
+                      aria-checked={isSelected}
+                      tabIndex={-1}
+                      key={id}
+                      selected={isSelected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox checked={isSelected} />
+                      </TableCell>
+                      <TableCell component="th" scope="row" padding="none">
+                        {n.title}
+                      </TableCell>
+                      <TableCell>{n.description}</TableCell>
+                      <TableCell numeric>{n.price}</TableCell>
+                      <TableCell numeric>{n.storage}</TableCell>
+                      <TableCell>{n._category}</TableCell>
+                      <TableCell>{n.isBuyable? "Yes":"No"}</TableCell>
+                    </TableRow>
+                  );
+                })}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 49 * emptyRows }}>
+                    <TableCell colSpan={6} />
                   </TableRow>
-                );
-              })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 49 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <TablePagination
-          component="div"
-          count={items.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          backIconButtonProps={{
-            'aria-label': 'Previous Page',
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'Next Page',
-          }}
-          onChangePage={this.handleChangePage}
-          onChangeRowsPerPage={this.handleChangeRowsPerPage}
-        />
-      </Paper>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          <TablePagination
+            component="div"
+            count={items.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            backIconButtonProps={{
+              'aria-label': 'Previous Page',
+            }}
+            nextIconButtonProps={{
+              'aria-label': 'Next Page',
+            }}
+            onChangePage={this.handleChangePage}
+            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+          />
+        </Paper>
+      </div>
     );
   }
 }

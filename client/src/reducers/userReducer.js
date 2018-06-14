@@ -28,6 +28,7 @@ export default function userReducer(state=makeEmptyUser(), action) {
   {
     const newState = {...state};
     newState.content.items = action.payload.content;
+    newState.ongoing = false;
     return newState;
   }
 
@@ -35,6 +36,7 @@ export default function userReducer(state=makeEmptyUser(), action) {
   {
     const newState = makeEmptyUser();
     newState.error = action.payload.error;
+    newState.ongoing = false;
     return newState;
   }
 

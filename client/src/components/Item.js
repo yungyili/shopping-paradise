@@ -9,6 +9,7 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import {fetchItem} from '../actions/itemActions';
 import {setCurrentOrder, setLeaveForLogin} from '../actions/orderActions';
@@ -154,8 +155,13 @@ class Item extends Component {
   }
 
   render(){
-    const { classes, item } = this.props;
+    const { classes, item, auth } = this.props;
     console.log("Item: render(): item=", item);
+
+    if (auth.ongoing || item.ongoing){
+      return (<LinearProgress color="secondary" />)
+    }
+
     return (
       <div className={classes.root}>
         <div>

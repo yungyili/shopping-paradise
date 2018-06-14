@@ -1,14 +1,17 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import { withRouter } from 'react-router';
+import { Route } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import Header from './SellHeader';
 import Footer from './SellFooter';
 import { setLeaveForLogin} from '../../actions/orderActions';
 import SellMainPage from './SellMainPage';
 import LoginForm from '../LoginForm';
+import SellItemEditForm from './SellItemEditForm';
 
 const styles = theme => ({
   root: {
@@ -30,7 +33,7 @@ class SellPage extends Component {
     const {auth, classes} = this.props;
 
     if (auth.ongoing){
-      return (<div>...</div>)
+      return (<LinearProgress color="secondary" />)
     } else {
       if (!auth.content){
         return (
