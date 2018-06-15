@@ -37,19 +37,19 @@ const styles = theme => ({
   },
   dialog: {
     width: "150px",
-    height: 'auto',
+    height: "auto",
     marginLeft: "auto",
-    marginRight: "auto",
+    marginRight: "auto"
   },
   itemImage: {
     maxHeight: "150px",
     maxWidth: "150px",
     width: "100%",
     height: "100%",
-    textAlign: 'center'
+    textAlign: "center"
   },
   dialogButton: {
-    width: '100%'
+    width: "100%"
   }
 });
 
@@ -58,16 +58,16 @@ class SellItemEditForm extends Component {
     super(props);
     this.state = {
       item: {
-        title: null,
-        description: null,
-        pictureUrl: null,
+        title: '',
+        description: '',
+        pictureUrl: '',
         price: 0,
         storage: 0,
-        _category: null,
+        _category: '',
         isBuyable: false
       },
       picDialogOpen: false,
-      picDialogValue: ''
+      picDialogValue: ""
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -97,9 +97,9 @@ class SellItemEditForm extends Component {
   handleInputChange(event) {
     const { name, value } = event.target;
 
-    this.setState({
-      [name]: value
-    });
+    const newState = {...this.state};
+    newState.item[name] = value;
+    this.setState(newState);
   }
 
   handlePicUrlChange = event => {
@@ -126,7 +126,7 @@ class SellItemEditForm extends Component {
     newState.item.pictureUrl = this.state.picDialogValue;
     this.setState(newState);
     this.handlePicDialogClose();
-  }
+  };
 
   handlePicDialogClose = () => {
     const newState = { ...this.state };
@@ -141,7 +141,9 @@ class SellItemEditForm extends Component {
     return (
       <div>
         <Paper className={classes.square}>
-          <img src={pictureUrl} alt="Item Image"
+          <img
+            src={pictureUrl}
+            alt="Item Image"
             className={classes.itemImage}
           />
         </Paper>
@@ -175,7 +177,7 @@ class SellItemEditForm extends Component {
               id="picUrl"
               label="Item Picture URL"
               type="text"
-              value={this.state.picDialogValue? this.state.picDialogValue : ''}
+              value={this.state.picDialogValue ? this.state.picDialogValue : ""}
               onChange={this.handlePicUrlChange}
               fullWidth
             />
@@ -191,6 +193,27 @@ class SellItemEditForm extends Component {
         </Dialog>
       </div>
     );
+  };
+
+  renderFields = () => {
+    const { classes } = this.props;
+
+    return (
+      <div>
+        <TextField
+          label="title"
+          name="title"
+          className={classes.textField}
+          value={this.state.item.title}
+          onChange={this.handleInputChange}
+          margin="normal"
+        />
+      </div>
+    );
+  };
+
+  renderCategorySelector = () => {
+    return <div>Category Selector</div>;
   };
 
   renderNavigationButton = () => {
@@ -222,7 +245,8 @@ class SellItemEditForm extends Component {
                 {this.renderPictureHolder()}
               </Grid>
               <Grid item xs={12} sm={6}>
-                title, price, storage, category
+                {this.renderFields()}
+                {this.renderCategorySelector()}
               </Grid>
               <Grid item xs={12}>
                 description
