@@ -16,6 +16,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { fetchItem } from "../../actions/itemActions";
+import {fetchCategory} from '../../actions/categoryActions';
 
 const styles = theme => ({
   root: {},
@@ -96,12 +97,19 @@ class SellItemEditForm extends Component {
   }
 
   updateItemStateByProps = nextProps => {
-    const newItem = { ...nextProps.item.content[0] };
-    this.setState({ item: newItem });
+    const newState = this.state;
+    newState.item = { ...nextProps.item.content[0] };
+
+    const categories = nextProps.category.content;
+    if (categories.length > 0) {
+      const root = categories.find(c => c.parentId === undefined);
+      newState.item._category = root._id;
+    }
+    this.setState(newState);
   };
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.item.content.length > 0) {
+    if (nextProps.item.content.length > 0 || nextProps.category.content.length > 0) {
       this.updateItemStateByProps(nextProps);
     }
   }
@@ -111,6 +119,7 @@ class SellItemEditForm extends Component {
     if (itemId) {
       this.props.fetchItem(itemId);
     }
+    this.props.fetchCategory();
   }
 
   handleSubmit(event) {
@@ -284,7 +293,66 @@ class SellItemEditForm extends Component {
     );
   };
 
+  getCategoryPath = (id, categories) => {
+    const index = categories.findIndex(category => {return category._id === id;});
+    const category = categories.find(category => {return category._id === id;});
+    if (index === -1) {
+      return null;
+    }
+
+    const path = categories.slice(0, index+1).filter(
+      c => { return c.lft < category.lft && category.rgt < c.rgt; });
+
+    return path;
+  }
+
+  getCategoryChilds = (id, categories) => {
+    const index = categories.findIndex(category => {return category._id === id;});
+    const category = categories.find(category => {return category._id === id;});
+    if (index === -1) {
+      return null;
+    }
+
+    var targetLft = category.lft + 1;
+    var ret = [];
+    while(true) {
+      const child = categories.find(c => {return c.lft === targetLft;});
+      if (!child){
+        break;
+      }
+      ret.push(child);
+      targetLft = child.rgt+1;
+    }
+
+    return ret;
+  }
+
   renderCategorySelector = () => {
+    const { classes } = this.props;
+    const categories = this.props.category.content.category;
+    const selectedCategoryId = this.state.item._category;
+
+    if (!categories || !selectedCategoryId) {
+      return <div>...</div>;
+    }
+
+    categories.sort((a,b)=>{
+      return a.lft - b.lft;
+    });
+
+    const root = categories.find(category => {return category.parentId === undefined});
+    if (!root) {
+      this.props.fetchCategory();
+      return (<div>...</div>);
+    }
+    console.log("SellItemEditForm: renderCategorySelector: child of root=", this.getCategoryChilds(root._id, categories));
+
+    const path = this.getCategoryPath(selectedCategoryId, categories);
+    if(!path){
+      return (<div>...</div>);
+    }
+    console.log("SellItemEditForm: renderCategorySelector: path=", path);
+
     return <div>Category Selector</div>;
   };
 
@@ -321,13 +389,13 @@ class SellItemEditForm extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, category } = this.props;
     const fetchedItem = this.props.item;
     const { item } = this.state;
 
     console.log("SellItemEditForm: render: state.item=", item);
 
-    if (fetchedItem.ongoing) {
+    if (fetchedItem.ongoing || category.ongoing) {
       return <LinearProgress color="secondary" />;
     }
 
@@ -362,10 +430,11 @@ SellItemEditForm.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    item: state.item
+    item: state.item,
+    category: state.category
   };
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps, { fetchItem })(withRouter(SellItemEditForm))
+  connect(mapStateToProps, { fetchItem, fetchCategory })(withRouter(SellItemEditForm))
 );

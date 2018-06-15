@@ -4,22 +4,36 @@ import {
   FETCH_CATEGORY_FAIL
 } from '../actions/actionTypes';
 
-export default function categoryReducer(state={content:{}, error:null}, action) {
+const makeEmptyCategory = () => {
+  return {
+    content: [],
+    error: null,
+    ongoing: false
+  };
+}
+
+export default function categoryReducer(state=makeEmptyCategory(), action) {
   console.log("categoryReducer: ", action);
   switch(action.type){
   case FETCHING_CATEGORY:
-    return state;
+  {
+    const newState = makeEmptyCategory();
+    newState.ongoing = true;
+    return newState;
+  }
   case FETCH_CATEGORY_OK:
-    return {
-      content: action.payload.content,
-      error: null
-    };
+  {
+    const newState = makeEmptyCategory();
+    newState.content = action.payload.content;
+    return newState;
+  }
 
   case FETCH_CATEGORY_FAIL:
-    return {
-      content: state.content,
-      error: action.payload.error
-    }
+  {
+    const newState = makeEmptyCategory();
+    newState.error = action.payload.error;
+    return newState;
+  }
   default:
     return state;
   }
