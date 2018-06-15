@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Link, Route, Switch} from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import { withTheme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -7,6 +8,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
 import ListItemText from '@material-ui/core/ListItemText';
 import SellItemTable from './SellItemTable';
+import SellItemEditForm from './SellItemEditForm';
+import SellOrderPage from './SellOrderPage';
+import NotFound from '../NotFound';
 
 const styles = theme => ({
   root: {
@@ -20,9 +24,6 @@ const styles = theme => ({
   primary: {},
 });
 
-
-
-
 class SellMainPage extends Component {
   constructor(props) {
     super(props);
@@ -32,19 +33,19 @@ class SellMainPage extends Component {
     }
   }
 
-  onMenuClick = (name) => {
-    this.setState({menu: name});
-  }
+  LinkWrapper = ({ ...props }) => (
+    <Link {...props} />
+  )
 
   renderMenu() {
     const { classes } = this.props;
     return (
       <Paper>
         <MenuList>
-          <MenuItem onClick={()=>this.onMenuClick('items')} name="items-menu" className={classes.menuItem}>
+          <MenuItem component={this.LinkWrapper} to="/sell/item" className={classes.menuItem}>
             Items
           </MenuItem>
-          <MenuItem onClick={()=>this.onMenuClick('orders')} name="orders-menu" className={classes.menuItem}>
+          <MenuItem component={this.LinkWrapper} to="/sell/order" className={classes.menuItem}>
             Orders
           </MenuItem>
         </MenuList>
@@ -55,13 +56,19 @@ class SellMainPage extends Component {
   renderWorkingArea(){
       const { classes } = this.props;
 
-      if (this.state.menu === 'orders'){
-        return (<div> Orders Working Area</div>);
-      } else {
-        return (<SellItemTable />);
-      }
+      return (
+        <div>
+          <Switch>
+            <Route exact path="/sell" component={SellItemTable} />
+            <Route exact path="/sell/item" component={SellItemTable} />
+            <Route exact path="/sell/item/:id(\w+)/edit" component={SellItemEditForm} />
+            <Route exact path="/sell/item/add" component={SellItemEditForm} />
+            <Route exact path="/sell/order" component={SellOrderPage} />
+            <Route component={NotFound} />
+          </Switch>
+        </div>
+      );
   }
-
 
   render() {
       const { classes } = this.props;

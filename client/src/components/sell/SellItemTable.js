@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import {Link} from 'react-router-dom';
 import { withRouter } from 'react-router';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -27,7 +28,6 @@ import { lighten } from '@material-ui/core/styles/colorManipulator';
 import {fetchUserItems} from '../../actions/userActions';
 
 
-
 const columnData = [
   { id: 'title', numeric: false, disablePadding: true, label: 'title' },
   { id: 'description', numeric: false, disablePadding: false, label: 'description' },
@@ -36,6 +36,10 @@ const columnData = [
   { id: 'category', numeric: false, disablePadding: false, label: 'category' },
   { id: 'isBuyable', numeric: false, disablePadding: false, label: 'is buyable?' },
 ];
+
+const LinkWrapper = ({ ...props }) => (
+  <Link {...props} />
+)
 
 class EnhancedTableHead extends Component {
   createSortHandler = property => event => {
@@ -123,8 +127,20 @@ const toolbarStyles = theme => ({
   },
 });
 
+
+
 let EnhancedTableToolbar = props => {
-  const { numSelected, classes } = props;
+  const { numSelected, selected, items, classes } = props;
+
+  const getOnlySelectedItemId = () => {
+    if (numSelected == 1) {
+      return items[selected]._id;
+    } else {
+      return null;
+    }
+  };
+
+  var editItemId = getOnlySelectedItemId();
 
   return (
     <Toolbar
@@ -148,10 +164,10 @@ let EnhancedTableToolbar = props => {
           direction="row"
           justify="flex-end"
       >
-        {numSelected === 1 && (
+        {editItemId && (
           <Grid item className={classes.action}>
             <Tooltip title="Edit">
-              <IconButton aria-label="Edit">
+              <IconButton aria-label="Edit" component={LinkWrapper} to={`/sell/item/${editItemId}/edit`}>
                 <EditIcon />
               </IconButton>
             </Tooltip>
@@ -169,7 +185,7 @@ let EnhancedTableToolbar = props => {
         {numSelected == 0 && (
           <Grid item className={classes.action}>
             <Tooltip title="Add Item">
-              <IconButton aria-label="add-item">
+              <IconButton aria-label="add-item" component={LinkWrapper} to="/sell/item/add">
                 <PlaylistAddIcon />
               </IconButton>
             </Tooltip>
@@ -293,7 +309,7 @@ class EnhancedTable extends React.Component {
       <div>
         <LinearProgress color="secondary" style={{visibility: user.ongoing? 'visible':'hidden'}} />
         <Paper className={classes.root} style={{marginTop: '0'}}>
-          <EnhancedTableToolbar numSelected={selected.length} />
+          <EnhancedTableToolbar numSelected={selected.length} selected={selected} items={items}/>
           <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
               <EnhancedTableHead
