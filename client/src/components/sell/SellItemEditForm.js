@@ -66,6 +66,15 @@ class SellItemEditForm extends Component {
         _category: '',
         isBuyable: false
       },
+      error: {
+        title: null,
+        description: null,
+        pictureUrl: null,
+        price: null,
+        storage: null,
+        _category: null,
+        isBuyable: null,
+      },
       picDialogOpen: false,
       picDialogValue: ""
     };
@@ -92,7 +101,19 @@ class SellItemEditForm extends Component {
     }
   }
 
-  handleSubmit(event) {}
+  handleSubmit(event) {
+    event.preventDefault();
+    console.log("SellItemEditForm: handleSubmit");
+
+    const newState = {...this.state};
+
+    newState.error.title = '';
+    if (!this.state.item.title) {
+      newState.error.title = 'Required Field';
+    }
+
+    this.setState(newState);
+  }
 
   handleInputChange(event) {
     const { name, value } = event.target;
@@ -197,12 +218,15 @@ class SellItemEditForm extends Component {
 
   renderFields = () => {
     const { classes } = this.props;
+    const titleError = this.state.error.title;
 
     return (
       <div>
         <TextField
           label="title"
           name="title"
+          error={titleError? true: false}
+          helperText={ titleError? titleError: ''}
           className={classes.textField}
           value={this.state.item.title}
           onChange={this.handleInputChange}
@@ -220,7 +244,7 @@ class SellItemEditForm extends Component {
     return (
       <div>
         <Button color="secondary">Cancel</Button>
-        <Button color="primary">OK</Button>
+        <Button type="submit" color="primary">OK</Button>
       </div>
     );
   };
