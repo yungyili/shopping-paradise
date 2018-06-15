@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
+import {Link} from 'react-router-dom';
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
@@ -50,8 +51,19 @@ const styles = theme => ({
   },
   dialogButton: {
     width: "100%"
+  },
+  textField: {
+    width: '100%'
+  },
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
   }
 });
+
+const LinkWrapper = ({ ...props }) => (
+  <Link {...props} />
+)
 
 class SellItemEditForm extends Component {
   constructor(props) {
@@ -107,10 +119,14 @@ class SellItemEditForm extends Component {
 
     const newState = {...this.state};
 
-    newState.error.title = '';
-    if (!this.state.item.title) {
-      newState.error.title = 'Required Field';
-    }
+    const requiredFields = ['title', 'pictureUrl', 'price', 'storage', '_category', 'isBuyable'];
+
+    requiredFields.map(field => {
+      newState.error[field] = '';
+      if (!this.state.item[field]) {
+        newState.error[field] = 'Required Field';
+      }
+    });
 
     this.setState(newState);
   }
@@ -218,20 +234,52 @@ class SellItemEditForm extends Component {
 
   renderFields = () => {
     const { classes } = this.props;
-    const titleError = this.state.error.title;
+    const {error, item} = this.state;
 
     return (
       <div>
-        <TextField
-          label="title"
-          name="title"
-          error={titleError? true: false}
-          helperText={ titleError? titleError: ''}
-          className={classes.textField}
-          value={this.state.item.title}
-          onChange={this.handleInputChange}
-          margin="normal"
-        />
+        <Grid item xs={12} sm={12}>
+          <TextField
+            label="title"
+            name="title"
+            error={error.title? true: false}
+            helperText={ error.title? error.title: ''}
+            className={classes.textField}
+            value={item.title}
+            onChange={this.handleInputChange}
+            margin="normal"
+          />
+        </Grid>
+        <Grid container direction="row">
+          <Grid item xs={12} sm={6}>
+            <TextField
+              style={{paddingRight:'0.5em'}}
+              label="price (USD)"
+              name="price"
+              type="number"
+              error={error.price? true: false}
+              helperText={ error.price? error.price: ''}
+              className={classes.textField}
+              value={item.price}
+              onChange={this.handleInputChange}
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              style={{paddingLeft:'0.5em'}}
+              label="storage"
+              name="storage"
+              type="number"
+              error={error.storage? true: false}
+              helperText={ error.storage? error.storage: ''}
+              className={classes.textField}
+              value={item.storage}
+              onChange={this.handleInputChange}
+              margin="normal"
+            />
+          </Grid>
+        </Grid>
       </div>
     );
   };
@@ -242,12 +290,35 @@ class SellItemEditForm extends Component {
 
   renderNavigationButton = () => {
     return (
-      <div>
-        <Button color="secondary">Cancel</Button>
+      <Grid container direction="row" justify="flex-end" >
+        <Button color="secondary" component={LinkWrapper} to={"/sell"}>Cancel</Button>
         <Button type="submit" color="primary">OK</Button>
-      </div>
+      </Grid>
     );
   };
+
+  renderDescriptionField = () => {
+    const { classes } = this.props;
+    const error = this.state.error.description;
+
+    return (
+      <div>
+        <TextField
+          label="description"
+          name="description"
+          error={error? true: false}
+          helperText={ error? error: ''}
+          className={classes.textField}
+          value={this.state.item.description}
+          onChange={this.handleInputChange}
+          margin="normal"
+          multiline={true}
+          rows={4}
+          rowsMax={4}
+        />
+      </div>
+    );
+  }
 
   render() {
     const { classes } = this.props;
@@ -273,7 +344,7 @@ class SellItemEditForm extends Component {
                 {this.renderCategorySelector()}
               </Grid>
               <Grid item xs={12}>
-                description
+                {this.renderDescriptionField()}
               </Grid>
             </Grid>
 
