@@ -162,6 +162,22 @@ class SellOrderPageToolbar extends React.Component {
             </List>
 
             <Typography variant="title" className={classes.title}>
+              Receiver
+            </Typography>
+            <List>
+                <ListItem>
+                  <ListItemText
+                    primary={`Name: ${order.receiverName}`}
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemText
+                    primary={`Address: ${order.receiverAddress}`}
+                  />
+                </ListItem>
+            </List>
+
+            <Typography variant="title" className={classes.title}>
               Items
             </Typography>
             <div>
@@ -181,7 +197,7 @@ class SellOrderPageToolbar extends React.Component {
             </List>
 
             <Typography variant="title" className={classes.title}>
-              Has Customer Paid?
+              Is Paid?
             </Typography>
             <List>
                 <ListItem>
@@ -192,7 +208,7 @@ class SellOrderPageToolbar extends React.Component {
             </List>
 
             <Typography variant="title" className={classes.title}>
-              Has Item Been Shipped?
+              Are Items Shipped?
             </Typography>
             <List>
                 <ListItem>
@@ -203,7 +219,7 @@ class SellOrderPageToolbar extends React.Component {
             </List>
 
             <Typography variant="title" className={classes.title}>
-              Has This Order Been Canceled?
+              Is Canceled?
             </Typography>
             <List>
                 <ListItem>

@@ -105,7 +105,7 @@ class CheckoutPage2 extends Component {
 
   onNextPage(){
     const selectedItems = this.getSelectedItems(this.props.order.content.items);
-    const newOrder = this.props.order;
+    const newOrder = this.props.order.content;
     newOrder.items = selectedItems;
     this.props.makeOrder(newOrder);
     this.props.onNextPage();
