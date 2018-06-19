@@ -70,16 +70,26 @@ const getUserBuyOrders = async (req, res) => {
   return getOrders(req, res, '_buyer');
 }
 
-const sellerCancelOrders = async (req,res) => {
+const sellerUpdateOrders = async (req,res) => {
   const orderId = req.params.id;
+  const {isShipped, isCanceled} = req.body;
   console.log("sellerCancelOrders: orderId=", orderId);
+  console.log("sellerCancelOrders: req.body=", req.body);
+
+  const modify = {};
+  if(isCanceled){
+    modify.isCanceled = true;
+  }
+  if(isShipped){
+    modify.isShipped = true;
+  }
 
   await Order.updateOne(
   {
     _id: orderId,
     _seller: req.user.id
   }, {
-    $set:{isCanceled: true}
+    $set:{...modify}
   }, async function(err){
     if (err){
       res.sendStatus(400);
@@ -185,7 +195,7 @@ module.exports = (app, passport) => {
     (req, res, next) => {
       console.log("put /api/user/sell/order: google: req.user", req.user);
       if (req.user){
-        sellerCancelOrders(req, res);
+        sellerUpdateOrders(req, res);
         return;
       }
       next();
@@ -194,7 +204,7 @@ module.exports = (app, passport) => {
     (req, res) => {
       console.log("put /api/user/sell/order: jwt: req.user", req.user);
       if (req.user){
-        sellerCancelOrders(req, res);
+        sellerUpdateOrders(req, res);
       } else {
         res.sendStatus(406);
       }

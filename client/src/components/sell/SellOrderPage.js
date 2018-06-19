@@ -21,7 +21,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import SellOrderPageToolbar from './SellOrderPageToolbar';
-import {fetchUserSellOrders, sellerCancelOrder} from '../../actions/userActions';
+import {fetchUserSellOrders, sellerCancelOrder, sellerShipOrder} from '../../actions/userActions';
 
 const columnData = [
   { id: 'buyer', numeric: false, disablePadding: true, label: 'buyer' },
@@ -129,6 +129,15 @@ class SellOrderPage extends React.Component {
     this.setState({ selected: [] });
     this.props.history.push('/sell/order');
   }
+  handleShipOrder = () => {
+    const {orders, selected, page, rowsPerPage } = this.state;
+    console.log("SellOrderPage: handleShipOrder, selected=", selected);
+    for (var i=0;i<selected.length; i++) {
+      this.props.sellerShipOrder(selected[i]);
+    }
+    this.setState({ selected: [] });
+    this.props.history.push('/sell/order');
+  }
 
   updateUserStateByProps = (nextProps) => {
     this.setState({orders: nextProps.user.content.orders.slice()});
@@ -219,6 +228,7 @@ class SellOrderPage extends React.Component {
           <SellOrderPageToolbar numSelected={selected.length} selected={selected}
             orders={orders} page={page} rowsPerPage={rowsPerPage}
             handleCancelOrder={this.handleCancelOrder}
+            handleShipOrder={this.handleShipOrder}
           />
           <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
@@ -296,6 +306,6 @@ function mapStateToProps(state){
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps,{fetchUserSellOrders, sellerCancelOrder})(
+  connect(mapStateToProps,{fetchUserSellOrders, sellerCancelOrder, sellerShipOrder})(
     withRouter(SellOrderPage)
   ));

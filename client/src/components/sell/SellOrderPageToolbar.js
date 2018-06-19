@@ -8,6 +8,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import BlockIcon from '@material-ui/icons/Block';
 import VisibilityIcon from '@material-ui/icons/Visibility';
+import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import red from '@material-ui/core/colors/red';
 import Toolbar from '@material-ui/core/Toolbar';
 import Grid from '@material-ui/core/Grid';
@@ -218,7 +219,8 @@ class SellOrderPageToolbar extends React.Component {
   }
 
   render() {
-    const { numSelected, selected, rowsPerPage, page, orders, classes, handleCancelOrder } = this.props;
+    const { numSelected, selected, rowsPerPage, page, orders, classes,
+      handleCancelOrder, handleShipOrder } = this.props;
 
     return (
       <Toolbar
@@ -265,6 +267,15 @@ class SellOrderPageToolbar extends React.Component {
                   </Button>
                 </DialogActions>
               </Dialog>
+            </Grid>
+          )}
+          {numSelected > 0 && (
+            <Grid item className={classes.action}>
+              <Tooltip title="Ship">
+                <IconButton aria-label="Ship" onClick={handleShipOrder}>
+                  <LocalShippingIcon />
+                </IconButton>
+              </Tooltip>
             </Grid>
           )}
           {numSelected > 0 && (
