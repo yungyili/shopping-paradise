@@ -6,6 +6,9 @@ import {
   FETCHING_USER_ORDERS,
   FETCH_USER_ORDERS_OK,
   FETCH_USER_ORDERS_FAIL,
+  CANCELING_USER_ORDERS,
+  CANCEL_USER_ORDERS_OK,
+  CANCEL_USER_ORDERS_FAIL,
   CREATING_ITEM,
   CREATE_ITEM_OK,
   CREATE_ITEM_FAIL,
@@ -189,3 +192,36 @@ export const fetchUserSellOrders = () =>
         });
       });
   };
+
+  export const sellerCancelOrder = (orderId) =>
+    async (dispatch) => {
+      dispatch({
+        type: CANCELING_USER_ORDERS,
+        payload: null
+      });
+
+      const token = localStorage.getItem('jwtToken');
+      console.log("sellerCancelOrder: orderId=", orderId, " ,token=", token);
+
+      await axios.put(`/api/user/sell/order/${orderId}`, {isCanceled: true}, {
+          headers: { Authorization: `JWT ${token}` }
+        })
+        .then((res)=>{
+          dispatch({
+            type: CANCEL_USER_ORDERS_OK,
+            payload: {
+              content: res.data,
+              error: null
+            }
+          });
+        })
+        .catch(e=>{
+          dispatch({
+            type: CANCEL_USER_ORDERS_FAIL,
+            payload: {
+              content: null,
+              error: e
+            }
+          });
+        });
+    };

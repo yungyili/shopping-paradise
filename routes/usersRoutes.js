@@ -45,6 +45,7 @@ const normalizeOrder = async (order) => {
     total: order.total,
     isPaid: order.isPaid,
     isShipped: order.isShipped,
+    isCanceled: order.isCanceled
   };
 
   console.log("normalizeOrder: normalized order=", ret);
@@ -67,6 +68,25 @@ const getUserSellOrders = (req, res) => {
 
 const getUserBuyOrders = async (req, res) => {
   return getOrders(req, res, '_buyer');
+}
+
+const sellerCancelOrders = async (req,res) => {
+  const orderId = req.params.id;
+  console.log("sellerCancelOrders: orderId=", orderId);
+
+  await Order.updateOne(
+  {
+    _id: orderId,
+    _seller: req.user.id
+  }, {
+    $set:{isCanceled: true}
+  }, async function(err){
+    if (err){
+      res.sendStatus(400);
+      return;
+    }
+    await getOrders(req, res, '_seller');
+  });
 }
 
 module.exports = (app, passport) => {
@@ -155,6 +175,26 @@ module.exports = (app, passport) => {
       console.log("/api/user/sell/order: jwt: req.user", req.user);
       if (req.user){
         getUserSellOrders(req, res);
+      } else {
+        res.sendStatus(406);
+      }
+    }
+  );
+
+  app.put('/api/user/sell/order/:id',
+    (req, res, next) => {
+      console.log("put /api/user/sell/order: google: req.user", req.user);
+      if (req.user){
+        sellerCancelOrders(req, res);
+        return;
+      }
+      next();
+    },
+    passport.authenticate('jwt', keys.jwtSession),
+    (req, res) => {
+      console.log("put /api/user/sell/order: jwt: req.user", req.user);
+      if (req.user){
+        sellerCancelOrders(req, res);
       } else {
         res.sendStatus(406);
       }

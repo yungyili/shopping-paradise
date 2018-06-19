@@ -10,7 +10,8 @@ const OrderSchema = new Schema({
   receiverAddress: String,
   total: {type: Number, default: 0},
   isPaid: {type: Boolean, default: false},
-  isShipped: {type: Boolean, default: false}
+  isShipped: {type: Boolean, default: false},
+  isCanceled: {type: Boolean, default: false}
 });
 
 mongoose.model('orders', OrderSchema);

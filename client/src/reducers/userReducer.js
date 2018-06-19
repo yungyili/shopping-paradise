@@ -5,6 +5,9 @@ import {
   FETCHING_USER_ORDERS,
   FETCH_USER_ORDERS_OK,
   FETCH_USER_ORDERS_FAIL,
+  CANCELING_USER_ORDERS,
+  CANCEL_USER_ORDERS_OK,
+  CANCEL_USER_ORDERS_FAIL,
   CREATING_ITEM,
   CREATE_ITEM_OK,
   CREATE_ITEM_FAIL,
@@ -57,7 +60,7 @@ const handleOK = (name, state, action) => {
 const handleFail = (name, state, action) => {
   const newState = {...state};
   newState.error[name] = action.payload.error;
-  newState.ongoing[name] = false;
+  newState.ongoings[name] = false;
   newState.ongoing = combineOngoingStatus(newState.ongoings);
   return newState;
 }
@@ -90,16 +93,19 @@ export default function userReducer(state=makeEmptyUser(), action) {
   }
 
   case FETCHING_USER_ORDERS:
+  case CANCELING_USER_ORDERS:
   {
     return handleDoing('orders', state, action);
   }
 
   case FETCH_USER_ORDERS_OK:
+  case CANCEL_USER_ORDERS_OK:
   {
     return handleOK('orders', state, action);
   }
 
   case FETCH_USER_ORDERS_FAIL:
+  case CANCEL_USER_ORDERS_FAIL:
   {
     return handleFail('orders', state, action);
   }

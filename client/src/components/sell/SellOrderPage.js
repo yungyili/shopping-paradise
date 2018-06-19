@@ -20,8 +20,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
-import {fetchUserSellOrders} from '../../actions/userActions';
 import SellOrderPageToolbar from './SellOrderPageToolbar';
+import {fetchUserSellOrders, sellerCancelOrder} from '../../actions/userActions';
 
 const columnData = [
   { id: 'buyer', numeric: false, disablePadding: true, label: 'buyer' },
@@ -29,6 +29,7 @@ const columnData = [
   { id: 'total', numeric: true, disablePadding: false, label: 'total (usd)' },
   { id: 'isPaid', numeric: true, disablePadding: false, label: 'isPaid' },
   { id: 'isShipped', numeric: false, disablePadding: false, label: 'isShipped' },
+  { id: 'isCanceled', numeric: false, disablePadding: false, label: 'isCanceled' },
 ];
 
 const LinkWrapper = ({ ...props }) => (
@@ -119,14 +120,14 @@ class SellOrderPage extends React.Component {
     };
   }
 
-  handleDeleteItems = () => {
+  handleCancelOrder = () => {
     const {orders, selected, page, rowsPerPage } = this.state;
-    console.log("SellOrderPage: handleDeleteItems, selected=", selected);
+    console.log("SellOrderPage: handleCancelOrder, selected=", selected);
     for (var i=0;i<selected.length; i++) {
-      this.props.deleteItem(selected[i]);
+      this.props.sellerCancelOrder(selected[i]);
     }
     this.setState({ selected: [] });
-    this.props.history.push('/sell/item');
+    this.props.history.push('/sell/order');
   }
 
   updateUserStateByProps = (nextProps) => {
@@ -217,7 +218,7 @@ class SellOrderPage extends React.Component {
         <Paper className={classes.root} style={{marginTop: '0'}}>
           <SellOrderPageToolbar numSelected={selected.length} selected={selected}
             orders={orders} page={page} rowsPerPage={rowsPerPage}
-            handleDeleteItems={this.handleDeleteItems}
+            handleCancelOrder={this.handleCancelOrder}
           />
           <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
@@ -252,7 +253,7 @@ class SellOrderPage extends React.Component {
                       <TableCell numeric>{n.total}</TableCell>
                       <TableCell numeric>{n.isPaid?"Yes":"No"}</TableCell>
                       <TableCell>{n.isShipped?"Yes":"No"}</TableCell>
-
+                      <TableCell>{n.isCanceled?"Yes":"No"}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -295,6 +296,6 @@ function mapStateToProps(state){
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps,{fetchUserSellOrders})(
+  connect(mapStateToProps,{fetchUserSellOrders, sellerCancelOrder})(
     withRouter(SellOrderPage)
   ));

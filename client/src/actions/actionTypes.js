@@ -47,6 +47,9 @@ export const FETCH_USER_ITEMS_FAIL = 'fetch_user_items_fail';
 export const FETCHING_USER_ORDERS = 'fetching_user_orders';
 export const FETCH_USER_ORDERS_OK = 'fetch_user_orders_ok';
 export const FETCH_USER_ORDERS_FAIL = 'fetch_user_orders_fail';
+export const CANCELING_USER_ORDERS = 'canceling_user_orders';
+export const CANCEL_USER_ORDERS_OK = 'cancel_user_orders_ok';
+export const CANCEL_USER_ORDERS_FAIL = 'cancel_user_orders_fail';
 
 /* Internal */
 export const SET_CURRENT_ORDER = 'set_current_order';

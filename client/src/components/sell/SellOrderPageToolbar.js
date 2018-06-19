@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
-import CancelIcon from '@material-ui/icons/Cancel';
+import BlockIcon from '@material-ui/icons/Block';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import red from '@material-ui/core/colors/red';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -200,6 +200,17 @@ class SellOrderPageToolbar extends React.Component {
                   />
                 </ListItem>
             </List>
+
+            <Typography variant="title" className={classes.title}>
+              Has This Order Been Canceled?
+            </Typography>
+            <List>
+                <ListItem>
+                  <ListItemText
+                    primary={order.isCanceled? "Yes":"No"}
+                  />
+                </ListItem>
+            </List>
           </Grid>
         </Grid>
       </div>
@@ -207,7 +218,7 @@ class SellOrderPageToolbar extends React.Component {
   }
 
   render() {
-    const { numSelected, selected, rowsPerPage, page, orders, classes, handleDeleteItems } = this.props;
+    const { numSelected, selected, rowsPerPage, page, orders, classes, handleCancelOrder } = this.props;
 
     return (
       <Toolbar
@@ -258,9 +269,9 @@ class SellOrderPageToolbar extends React.Component {
           )}
           {numSelected > 0 && (
             <Grid item className={classes.action}>
-              <Tooltip title="Delete">
-                <IconButton aria-label="Cancel" onClick={handleDeleteItems}>
-                  <CancelIcon style={{color:red[900]}}/>
+              <Tooltip title="Cancel">
+                <IconButton aria-label="Cancel" onClick={handleCancelOrder}>
+                  <BlockIcon style={{color:red[900]}}/>
                 </IconButton>
               </Tooltip>
             </Grid>
