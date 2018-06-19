@@ -3,6 +3,9 @@ import {
   FETCHING_USER_ITEMS,
   FETCH_USER_ITEMS_OK,
   FETCH_USER_ITEMS_FAIL,
+  FETCHING_USER_ORDERS,
+  FETCH_USER_ORDERS_OK,
+  FETCH_USER_ORDERS_FAIL,
   CREATING_ITEM,
   CREATE_ITEM_OK,
   CREATE_ITEM_FAIL,
@@ -153,3 +156,36 @@ export const fetchUserItems = () =>
           });
         });
     }
+
+export const fetchUserOrders = () =>
+  async (dispatch) => {
+
+    dispatch({
+      type: FETCHING_USER_ORDERS,
+      payload: null
+    });
+
+    const token = localStorage.getItem('jwtToken');
+
+    await axios.get('/api/user/order', {
+        headers: { Authorization: `JWT ${token}` }
+      })
+      .then((res)=>{
+        dispatch({
+          type: FETCH_USER_ORDERS_OK,
+          payload: {
+            content: res.data,
+            error: null
+          }
+        });
+      })
+      .catch(e=>{
+        dispatch({
+          type: FETCH_USER_ORDERS_FAIL,
+          payload: {
+            content: null,
+            error: e
+          }
+        });
+      });
+  };
