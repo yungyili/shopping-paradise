@@ -32,7 +32,7 @@ const handlePayment = async (req, res) => {
   }
 
   //TODO: need to substract what in the order from storage
-  
+
   res.send(orderId);
 }
 
@@ -59,14 +59,17 @@ const makeOrder = async (req, res) => {
     return;
   }
 
-  const sellerId = items[0]._user;
+  console.log("makeOrder: items=",items);
+
+  const sellerId = items[0].item._user;
   for(var i=0;i<items.length;i++){
-    if (sellerId != items[i]._user){
+    if (sellerId != items[i].item._user){
       res.sendStatus(400);
       console.log("makeOrder: failed. Not all of the items belong to same seller");
       return;
     }
   }
+  console.log("makeOrder: sellerId=",sellerId);
 
   var total = 0;
   for (var i=0; i<items.length;i++){
@@ -81,7 +84,7 @@ const makeOrder = async (req, res) => {
   }
 
   const newOrder = await new Order({
-    _buyer: req.user._id,
+    _buyer: req.user.id,
     _seller: sellerId,
     items: items.map(item=>item.item),
     quantities: items.map(item=>item.quantity),
