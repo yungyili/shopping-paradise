@@ -12,7 +12,8 @@ import {jwtLogin} from '../actions/authActions';
 
 const styles = theme => ({
   loginForm: {
-    margin: '0 30%'
+    margin: '0 30%',
+    minWidth: '300px'
   },
   button: {
     width: '100%',
