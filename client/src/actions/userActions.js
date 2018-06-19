@@ -157,7 +157,7 @@ export const fetchUserItems = () =>
         });
     }
 
-export const fetchUserOrders = () =>
+export const fetchUserSellOrders = () =>
   async (dispatch) => {
 
     dispatch({
@@ -167,7 +167,7 @@ export const fetchUserOrders = () =>
 
     const token = localStorage.getItem('jwtToken');
 
-    await axios.get('/api/user/order', {
+    await axios.get('/api/user/sell/order', {
         headers: { Authorization: `JWT ${token}` }
       })
       .then((res)=>{

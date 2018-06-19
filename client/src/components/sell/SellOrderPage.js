@@ -12,29 +12,23 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
-import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
-import red from '@material-ui/core/colors/red';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
-import {fetchUserItems} from '../../actions/userActions';
-import {deleteItem} from '../../actions/userActions';
+import {fetchUserSellOrders} from '../../actions/userActions';
+import SellOrderPageToolbar from './SellOrderPageToolbar';
 
 const columnData = [
-  { id: 'title', numeric: false, disablePadding: true, label: 'title' },
-  { id: 'description', numeric: false, disablePadding: false, label: 'description' },
-  { id: 'price', numeric: true, disablePadding: false, label: 'price (usd)' },
-  { id: 'storage', numeric: true, disablePadding: false, label: 'storage' },
-  { id: 'category', numeric: false, disablePadding: false, label: 'category' },
-  { id: 'isBuyable', numeric: false, disablePadding: false, label: 'is buyable?' },
+  { id: 'buyer', numeric: false, disablePadding: true, label: 'buyer' },
+  { id: 'items', numeric: false, disablePadding: false, label: 'items' },
+  { id: 'total', numeric: true, disablePadding: false, label: 'total (usd)' },
+  { id: 'isPaid', numeric: true, disablePadding: false, label: 'isPaid' },
+  { id: 'isShipped', numeric: false, disablePadding: false, label: 'isShipped' },
 ];
 
 const LinkWrapper = ({ ...props }) => (
@@ -98,112 +92,6 @@ SellOrderPageHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-const toolbarStyles = theme => ({
-  root: {
-    paddingRight: theme.spacing.unit,
-  },
-  highlight:
-    theme.palette.type === 'light'
-      ? {
-          color: theme.palette.secondary.main,
-          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-        }
-      : {
-          color: theme.palette.text.primary,
-          backgroundColor: theme.palette.secondary.dark,
-        },
-  spacer: {
-    flex: '1 1 100%',
-  },
-  actions: {
-    flex: '1 1 100%',
-    color: theme.palette.text.secondary
-  },
-  action: {
-
-  },
-  title: {
-    flex: '0 0 auto',
-  },
-});
-
-let SellOrderPageToolbar = props => {
-  const { numSelected, selected, rowsPerPage, page, items, classes, handleDeleteItems } = props;
-
- console.log("SellOrderPageToolbar: selected=", selected);
-
-  const getOnlySelectedItemId = () => {
-    if (numSelected == 1) {
-      const item = items.find(item => {return item._id === selected[0]; });
-      return item._id;
-    } else {
-      return null;
-    }
-  };
-
-  var editItemId = getOnlySelectedItemId();
-
-  return (
-    <Toolbar
-      className={classNames(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-    >
-      <div className={classes.title}>
-        {numSelected > 0 ? (
-          <Typography color="inherit" variant="subheading">
-            {numSelected} selected
-          </Typography>
-        ) : (
-          <Typography variant="title" id="tableTitle">
-            Items For Sale
-          </Typography>
-        )}
-      </div>
-
-      <Grid container className={classes.actions}
-          direction="row"
-          justify="flex-end"
-      >
-        {editItemId && (
-          <Grid item className={classes.action}>
-            <Tooltip title="Edit">
-              <IconButton aria-label="Edit" component={LinkWrapper} to={`/sell/item/${editItemId}/edit`}>
-                <EditIcon />
-              </IconButton>
-            </Tooltip>
-          </Grid>
-        )}
-        {numSelected > 0 && (
-          <Grid item className={classes.action}>
-            <Tooltip title="Delete">
-              <IconButton aria-label="Delete" onClick={handleDeleteItems}>
-                <DeleteIcon style={{color:red[900]}}/>
-              </IconButton>
-            </Tooltip>
-          </Grid>
-        )}
-        {numSelected == 0 && (
-          <Grid item className={classes.action}>
-            <Tooltip title="Add Item">
-              <IconButton aria-label="add-item" component={LinkWrapper} to="/sell/item/add">
-                <PlaylistAddIcon />
-              </IconButton>
-            </Tooltip>
-          </Grid>
-        )}
-      </Grid>
-    </Toolbar>
-  );
-};
-
-SellOrderPageToolbar.propTypes = {
-  classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
-};
-
-SellOrderPageToolbar = withStyles(toolbarStyles)(SellOrderPageToolbar);
-
 const styles = theme => ({
   root: {
     width: '100%',
@@ -225,14 +113,14 @@ class SellOrderPage extends React.Component {
       order: 'asc',
       orderBy: 'calories',
       selected: [],
-      items: this.props.user.content.items,
+      orders: this.props.user.content.orders,
       page: 0,
       rowsPerPage: 5,
     };
   }
 
   handleDeleteItems = () => {
-    const {items, selected, page, rowsPerPage } = this.state;
+    const {orders, selected, page, rowsPerPage } = this.state;
     console.log("SellOrderPage: handleDeleteItems, selected=", selected);
     for (var i=0;i<selected.length; i++) {
       this.props.deleteItem(selected[i]);
@@ -242,7 +130,7 @@ class SellOrderPage extends React.Component {
   }
 
   updateUserStateByProps = (nextProps) => {
-    this.setState({items: nextProps.user.content.items.slice()});
+    this.setState({orders: nextProps.user.content.orders.slice()});
   };
 
   componentWillReceiveProps(nextProps){
@@ -252,7 +140,7 @@ class SellOrderPage extends React.Component {
   }
 
   componentDidMount() {
-    this.props.fetchUserItems();
+    this.props.fetchUserSellOrders();
   }
 
   handleRequestSort = (event, property) => {
@@ -265,15 +153,15 @@ class SellOrderPage extends React.Component {
 
     const data =
       order === 'desc'
-        ? this.state.items.sort((a, b) => (b[orderBy] < a[orderBy] ? -1 : 1))
-        : this.state.items.sort((a, b) => (a[orderBy] < b[orderBy] ? -1 : 1));
+        ? this.state.orders.sort((a, b) => (b[orderBy] < a[orderBy] ? -1 : 1))
+        : this.state.orders.sort((a, b) => (a[orderBy] < b[orderBy] ? -1 : 1));
 
     this.setState({ data, order, orderBy });
   };
 
   handleSelectAllClick = (event, checked) => {
     if (checked) {
-      this.setState({ selected: this.state.items.map((n, id) => id) });
+      this.setState({ selected: this.state.orders.map((n, id) => id) });
       return;
     }
     this.setState({ selected: [] });
@@ -310,17 +198,25 @@ class SellOrderPage extends React.Component {
 
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
+  itemsToDescriptions = (items, quantities) => {
+    var ret=[];
+    for(var i=0;i<items.length;i++){
+      ret.push(`${items[i].title}(${quantities[i]}pcs)`);
+    }
+    return ret;
+  }
+
   render() {
     const { classes, user } = this.props;
-    const { items, order, orderBy, selected, rowsPerPage, page } = this.state;
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
+    const { orders, order, orderBy, selected, rowsPerPage, page } = this.state;
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, orders.length - page * rowsPerPage);
 
     return (
       <div>
         <LinearProgress color="secondary" style={{visibility: user.ongoing? 'visible':'hidden'}} />
         <Paper className={classes.root} style={{marginTop: '0'}}>
           <SellOrderPageToolbar numSelected={selected.length} selected={selected}
-            items={items} page={page} rowsPerPage={rowsPerPage}
+            orders={orders} page={page} rowsPerPage={rowsPerPage}
             handleDeleteItems={this.handleDeleteItems}
           />
           <div className={classes.tableWrapper}>
@@ -331,10 +227,10 @@ class SellOrderPage extends React.Component {
                 orderBy={orderBy}
                 onSelectAllClick={this.handleSelectAllClick}
                 onRequestSort={this.handleRequestSort}
-                rowCount={items.length}
+                rowCount={orders.length}
               />
               <TableBody>
-                {items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
+                {orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
                   const isSelected = this.isSelected(n._id);
                   return (
                     <TableRow
@@ -350,13 +246,13 @@ class SellOrderPage extends React.Component {
                         <Checkbox checked={isSelected} />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {n.title}
+                        {n._buyer.name}
                       </TableCell>
-                      <TableCell>{n.description}</TableCell>
-                      <TableCell numeric>{n.price}</TableCell>
-                      <TableCell numeric>{n.storage}</TableCell>
-                      <TableCell>{n._category}</TableCell>
-                      <TableCell>{n.isBuyable? "Yes":"No"}</TableCell>
+                      <TableCell>{this.itemsToDescriptions(n.items, n.quantities)}</TableCell>
+                      <TableCell numeric>{n.total}</TableCell>
+                      <TableCell numeric>{n.isPaid?"Yes":"No"}</TableCell>
+                      <TableCell>{n.isShipped?"Yes":"No"}</TableCell>
+
                     </TableRow>
                   );
                 })}
@@ -370,7 +266,7 @@ class SellOrderPage extends React.Component {
           </div>
           <TablePagination
             component="div"
-            count={items.length}
+            count={orders.length}
             rowsPerPage={rowsPerPage}
             page={page}
             backIconButtonProps={{
@@ -399,6 +295,6 @@ function mapStateToProps(state){
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps,{fetchUserItems, deleteItem})(
+  connect(mapStateToProps,{fetchUserSellOrders})(
     withRouter(SellOrderPage)
   ));

@@ -18,15 +18,21 @@ const getUserItems = async (req, res) => {
 
 const normalizeOrder = async (order) => {
   console.log("normalizeOrder: order=", order);
-  const buyer = (({ name , email, _id }) => ({ name, email, _id }))(await User.findOne({_id: order._buyer}).exec());
-  const seller = (({ name , email, _id }) => ({ name, email, _id }))(await User.findOne({_id: order._seller}).exec());
+  const buyer = (({ name , email, _id }) => ({ name, email, _id }))
+    (await User.findOne({_id: order._buyer}).exec());
+
+  const seller = (({ name , email, _id }) => ({ name, email, _id }))
+    (await User.findOne({_id: order._seller}).exec());
 
   const combinedQuery = {
     $or: order.items.map(id => {
       return { _id: id };
     })
   };
-  const items = (await Item.find(combinedQuery).exec()).map((({ title , price, storage, _category }) => ({ title , price, storage, _category })));
+
+  const items = (await Item.find(combinedQuery).exec())
+    .map((({ title , price, storage, _category, pictureUrl }) =>
+      ({ title , price, storage, _category, pictureUrl })));
 
   const ret = {
     _id: order._id,
