@@ -211,8 +211,12 @@ class BuyersLanding extends Component {
     if (categoryId) {
       children = category.filter(c => c.parentId === categoryId);
     } else {
-      const rootCategory = category.find(c => !c.parentId);
-      children = category.filter(c => c.parentId === rootCategory._id);
+      const rootCategory = category.find(c => c.parentId === undefined);
+      if (rootCategory) {
+        children = category.filter(c => c.parentId === rootCategory._id);
+      } else {
+        children = [];
+      }
     }
 
     if (children.length > 0) {
