@@ -17,6 +17,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import IconButton from '@material-ui/core/IconButton';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import {jwtLogin, signUp} from '../actions/authActions';
 
 
@@ -303,10 +304,11 @@ class LoginForm extends Component {
 
 
   render() {
-    const { classes } = this.props;
+    const { classes, auth } = this.props;
 
     return (
       <div className={classes.loginForm}>
+        <LinearProgress color="secondary" style={{visibility: auth.ongoing? 'visible':'hidden'}} />
         {this.renderSignUpForm()}
         <Divider />
         <Button variant="raised" href="/api/auth/google" onClick={this.onGoogleLogin} color="secondary" className={classes.button}>

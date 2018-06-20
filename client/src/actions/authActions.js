@@ -44,7 +44,7 @@ export const jwtLogin = (loginInfo, history) =>
       .catch(e=>{
         console.log("jwtLogin: failed");
         localStorage.removeItem('jwtToken');
-        history.push('/');
+
         dispatch({
           type: LOGIN_FAIL,
           payload: {
