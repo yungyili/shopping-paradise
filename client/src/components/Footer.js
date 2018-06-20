@@ -20,7 +20,7 @@ const styles = theme => ({
 class Footer extends Component {
   render() {
     const { classes } = this.props;
-    const { theme } = this.props;
+    const { theme } = this.props; 
     const primaryColor = theme.palette.primary.main;
     console.log("Footer: this.props", this.props);
 

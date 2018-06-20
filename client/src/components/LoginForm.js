@@ -8,6 +8,11 @@ import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import GoogleIcon from 'material-ui-next-community-icons/icons/google';
 import FacebookIcon from 'material-ui-next-community-icons/icons/facebook-box';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import {jwtLogin} from '../actions/authActions';
 
 const styles = theme => ({
@@ -31,13 +36,47 @@ const styles = theme => ({
   },
 });
 
+const signUpFields = [
+  {
+    name: 'userName',
+    label: 'User Name',
+    type: 'text'
+  },
+  {
+    name: 'password',
+    label: 'Password',
+    type: 'password'
+  },
+  {
+    name: 'email',
+    label: 'Email Address',
+    type: 'email'
+  }
+];
+
+
 class LoginForm extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
       email: '',
-      password: ''
+      password: '',
+      signUpDialog: false,
+      signUp: {
+        userName: {
+          value: '',
+          error: null
+        },
+        email: {
+          value: '',
+          error: null
+        },
+        password: {
+          value: '',
+          error: null
+        },
+      }
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -60,7 +99,20 @@ class LoginForm extends Component {
     }
   }
 
-  handleInputChange(event) {
+  handleSignUpInputChange = (event) => {
+    const {name, value} = event.target;
+
+    const newState = this.state.signUp;
+    newState[name].value = value;
+
+    this.setState({
+      signUp:{
+        ...newState
+      }
+    });
+  }
+
+  handleInputChange = (event) => {
     const {name, value} = event.target;
 
     this.setState({
@@ -68,14 +120,108 @@ class LoginForm extends Component {
     });
   }
 
+  handleSignUpOpen = () => {
+    this.resetSignUpInput();
+    this.setState({ signUpDialog: true });
+  }
+
+  handleSignUpClose = () => {
+    this.setState({ signUpDialog: false });
+  }
+
+  handleSignUpOK = () => {
+    const { signUp } = this.state;
+    const newState = {...this.state};
+
+    signUpFields.map(field => {
+        newState.signUp[field.name].error = null;
+        return null;
+    });
+
+    var validateOK = true;
+    signUpFields.map(field => {
+      if(!signUp[field.name].value) {
+        newState.signUp[field.name].error =  'Required field';
+        validateOK = false;
+      }
+      return null;
+    });
+
+    this.setState(newState);
+
+    if (validateOK) {
+      this.handleSignUpClose();
+    }
+  }
+
+  resetSignUpInput = () => {
+    const newState = {...this.state};
+    signUpFields.map(field => {
+        newState.signUp[field.name].error = null;
+        newState.signUp[field.name].value = '';
+        return null;
+    });
+    this.setState(newState);
+  }
+
+  renderSignUpForm = () => {
+    const { classes } = this.props;
+    const { signUp } = this.state;
+    console.log("LoginForm: renderSignUpForm: this.state=", this.state);
+
+    return (
+      <div>
+        <Button variant="raised"
+          color="secondary" className={classes.button}
+          onClick={this.handleSignUpOpen}
+        >
+          Sign Up
+        </Button>
+        <form>
+          <Dialog
+            open={this.state.signUpDialog}
+            onClose={this.handleSignUpClose}
+            aria-labelledby="form-dialog-title"
+          >
+            <DialogTitle id="form-dialog-title">Sign Up</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                To subscribe to this website, please enter your user name, email address and password here.
+              </DialogContentText>
+              {signUpFields.map((field, idx) => {
+                return (
+                  <TextField
+                    {...idx===0?{autoFocus:true}:{}} margin="dense"
+                    name={field.name} label={field.label} type={field.type}
+                    fullWidth
+                    onChange={this.handleSignUpInputChange}
+                    value={signUp[field.name].value}
+                    error={signUp[field.name].error? true: false}
+                    key={field.name}
+                  />
+                );
+              })}
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.handleSignUpClose} color="secondary">
+                Cancel
+              </Button>
+              <Button onClick={this.handleSignUpOK} color="primary">
+                OK
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </form>
+      </div>
+    );
+  }
+
   render() {
     const { classes } = this.props;
 
     return (
       <div className={classes.loginForm}>
-        <Button variant="raised" href="/signup" color="secondary" className={classes.button}>
-          Sing Up
-        </Button>
+        {this.renderSignUpForm()}
         <Divider />
         <Button variant="raised" href="/api/auth/google" onClick={this.onGoogleLogin} color="secondary" className={classes.button}>
           Login with Google <GoogleIcon className={classes.icon}/>
