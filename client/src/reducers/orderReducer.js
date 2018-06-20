@@ -4,6 +4,9 @@ import {
   MAKING_ORDER,
   MAKE_ORDER_OK,
   MAKE_ORDER_FAIL,
+  PAYING,
+  PAY_OK,
+  PAY_FAIL,
 } from '../actions/actionTypes';
 import { LEAVE_FOR_LOGIN } from '../constants/orders';
 
@@ -53,6 +56,28 @@ export default function currentOrderReducer(state=makeEmptyOrder(), action) {
       error: action.payload.error,
       ongoing: false
     };
+/* Stipe Checkout code will crash
+  case PAYING:
+    return {
+      content: null,
+      error: null,
+      ongoing: true
+    }
+
+  case PAY_OK:
+    return {
+      content: state.content,
+      error: null,
+      ongoing: false
+    }
+
+  case PAY_FAIL:
+    return {
+      content: state.content,
+      error: action.payload.error,
+      ongoing: false
+    }
+*/
   default:
     return state;
   }

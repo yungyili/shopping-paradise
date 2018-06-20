@@ -41,7 +41,7 @@ export const handlePayment = ({_id}, token) =>
 
     dispatch({
       type: PAYING,
-      payload: null
+      payload: _id
     });
 
     const jwtToken = localStorage.getItem('jwtToken');

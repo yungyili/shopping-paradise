@@ -161,6 +161,10 @@ class BuyerOrderPage extends React.Component {
     this.setState({ selected: [] });
   };
 
+  handlePayClicked = () => {
+    this.setState({ selected: [] });
+  }
+
   handleClick = (event, id) => {
     const { selected } = this.state;
     const selectedIndex = selected.indexOf(id);
@@ -207,11 +211,11 @@ class BuyerOrderPage extends React.Component {
 
     return (
       <div>
-        <LinearProgress color="secondary" style={{visibility: user.ongoing || auth.ongoing? 'visible':'hidden'}} />
+        <LinearProgress color="secondary" style={{visibility: user.ongoing || auth.ongoing || order.ongoing? 'visible':'hidden'}} />
         <Paper className={classes.root} style={{marginTop: '0'}}>
           <BuyerOrderPageToolbar numSelected={selected.length} selected={selected}
             orders={orders} page={page} rowsPerPage={rowsPerPage}
-            handleShipOrder={this.handleShipOrder}
+            handlePayClicked={this.handlePayClicked}
           />
           <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
@@ -296,7 +300,8 @@ BuyerOrderPage.propTypes = {
 function mapStateToProps(state){
   return {
     user: state.user,
-    auth: state.auth
+    auth: state.auth,
+    order: state.order
   };
 }
 

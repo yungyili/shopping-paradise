@@ -84,6 +84,8 @@ class SellOrderPageToolbar extends React.Component {
     const order = this.getOnlySelectedOrder();
     console.log("onToken: token=", token, " ,order=",order);
 
+    //this.setState({ selected: [] });
+    this.props.handlePayClicked();
     this.props.handlePayment(order, token);
   }
 

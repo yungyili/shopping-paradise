@@ -10,6 +10,12 @@ const handlePayment = async (req, res) => {
   const token = req.body;
   const orderId = req.params.id;
 
+  if(!orderId) {
+    console.log("handlePayment failed: no order id");
+    res.send(400);
+    return;
+  }
+
   const order = await Order.findOne({_id: orderId}).exec();
   if (!order){
     console.log("handlePayment failed: cannot find order");
@@ -31,9 +37,18 @@ const handlePayment = async (req, res) => {
     return;
   }
 
-  //TODO: need to substract what in the order from storage
-
-  res.send(orderId);
+  await Order.updateOne(
+  {
+    _id: orderId,
+  }, {
+    $set:{isPaid: true}
+  }, async function(err){
+    if (err){
+      res.sendStatus(400);
+      return;
+    }
+    res.send(orderId);
+  });
 }
 
 const makeOrder = async (req, res) => {
