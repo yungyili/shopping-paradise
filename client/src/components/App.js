@@ -8,6 +8,7 @@ import BuyersPage from './BuyersPage';
 import LoginForm from './LoginForm';
 import CheckoutPage from './checkout/CheckoutPage';
 import SellPage from './sell/SellPage';
+import BuyerWorkspaceMainPage from './buy/BuyerWorkspaceMainPage';
 
 const styles = theme => ({
   root: {
@@ -30,6 +31,7 @@ class App extends React.Component {
           <Route exact path="/login" component={LoginForm} />
           <Route path="/checkout" component={CheckoutPage} />
           <Route path="/sell" component={SellPage} />
+          <Route path="/buy" component={BuyerWorkspaceMainPage} />
         </div>
       </BrowserRouter>
     );

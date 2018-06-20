@@ -9,11 +9,9 @@ import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import PersonIcon from '@material-ui/icons/Person';
-import SearchIcon from '@material-ui/icons/Search';
-import {fetchCurrentUser, logout} from '../actions/authActions';
+import {fetchCurrentUser, logout} from '../../actions/authActions';
+import {setLeaveForLogin} from '../../actions/orderActions';
 
 const styles = {
   header: {
@@ -35,7 +33,7 @@ const styles = {
 };
 
 
-class Header extends Component {
+class SellHeader extends Component {
 
   componentDidMount(){
     this.props.fetchCurrentUser();
@@ -46,6 +44,7 @@ class Header extends Component {
   )
 
   onLogin = () => {
+    this.props.setLeaveForLogin(this.props.location.pathname);
     this.props.history.push('/login');
   }
 
@@ -57,7 +56,7 @@ class Header extends Component {
       return (<Button className={classes.button}>...</Button>);
     } else {
       if (!auth.content){
-        return (<IconButton className={classes.button} onClick={this.onLogin}><PersonIcon /></IconButton>)
+        return null;
       } else {
         return (<IconButton className={classes.button} onClick={()=>this.props.logout()}><ExitToAppIcon /></IconButton>);
       }
@@ -68,13 +67,8 @@ class Header extends Component {
     const {classes} = this.props;
     return (
       <div>
-        <Button className={classes.button} to={"/sell"} component={this.LinkWrapper}>Sell</Button>
-        <IconButton
-          key={0} className={classes.button} aria-label="Shopping Cart"
-          to={"/buy"} component={this.LinkWrapper}
-        >
-          <ShoppingCartIcon />
-        </IconButton>
+          <Button className={classes.button} to={"/sell"} component={this.LinkWrapper}>sell</Button>
+          <Button className={classes.button} to={"/"} component={this.LinkWrapper}>buy</Button>
         {this.renderLoginButton()}
       </div>
     );
@@ -95,10 +89,6 @@ class Header extends Component {
               Shopping Paradise
             </Typography>
 
-            <div>
-              <SearchIcon className={classes.icon} />
-              <input type="text" placeholder="Search.." />
-            </div>
             {this.renderComponentsOnTheRight()}
           </Toolbar>
         </AppBar>
@@ -108,7 +98,7 @@ class Header extends Component {
   }
 }
 
-Header.propTypes = {
+SellHeader.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
@@ -119,6 +109,6 @@ function mapStateToProps(state){
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps,{fetchCurrentUser, logout})(
-    withRouter(Header)
+  connect(mapStateToProps,{fetchCurrentUser, setLeaveForLogin, logout})(
+    withRouter(SellHeader)
   ));

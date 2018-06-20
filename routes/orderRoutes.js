@@ -21,7 +21,7 @@ const handlePayment = async (req, res) => {
     const charge = await stripe.charges.create({
       amount: parseInt(order.total * 100),
       currency: 'usd',
-      description: '5$ for 5 credits',
+      description: 'shopping paradise payment',
       source: token.id
     });
 

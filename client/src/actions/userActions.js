@@ -193,6 +193,39 @@ export const fetchUserSellOrders = () =>
       });
   };
 
+  export const fetchUserBuyOrders = () =>
+    async (dispatch) => {
+
+      dispatch({
+        type: FETCHING_USER_ORDERS,
+        payload: null
+      });
+
+      const token = localStorage.getItem('jwtToken');
+
+      await axios.get('/api/user/buy/order', {
+          headers: { Authorization: `JWT ${token}` }
+        })
+        .then((res)=>{
+          dispatch({
+            type: FETCH_USER_ORDERS_OK,
+            payload: {
+              content: res.data,
+              error: null
+            }
+          });
+        })
+        .catch(e=>{
+          dispatch({
+            type: FETCH_USER_ORDERS_FAIL,
+            payload: {
+              content: null,
+              error: e
+            }
+          });
+        });
+    };
+
 export const sellerCancelOrder = (orderId) =>
   async (dispatch) => {
     dispatch({

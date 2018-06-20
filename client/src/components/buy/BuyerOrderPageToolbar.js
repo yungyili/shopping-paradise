@@ -5,8 +5,9 @@ import { withRouter } from 'react-router';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import StripeCheckout from 'react-stripe-checkout';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
-import BlockIcon from '@material-ui/icons/Block';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 import red from '@material-ui/core/colors/red';
@@ -30,6 +31,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import {handlePayment} from '../../actions/orderActions';
 
 const toolbarStyles = theme => ({
   root: {
@@ -72,11 +74,18 @@ const toolbarStyles = theme => ({
   },
 });
 
-class BuyerOrderPageToolbar extends React.Component {
+class SellOrderPageToolbar extends React.Component {
 
   state = {
     dialogOpen: false,
   };
+
+  onToken = (token) => {
+    const order = this.getOnlySelectedOrder();
+    console.log("onToken: token=", token, " ,order=",order);
+
+    this.props.handlePayment(order, token);
+  }
 
   handleDialogOpen = () => {
     this.setState({ dialogOpen: true });
@@ -94,6 +103,15 @@ class BuyerOrderPageToolbar extends React.Component {
       return null;
     }
   };
+
+  calculateTotalMoney = (order) => {
+    const { items, quantities} = order;
+    var total = 0;
+    for(var i=0;i<items.length;i++){
+      total += items[i].price * quantities[i];
+    }
+    return total;
+  }
 
   renderItemsDetail = (order) => {
     const { classes } = this.props;
@@ -146,17 +164,17 @@ class BuyerOrderPageToolbar extends React.Component {
         <Grid container spacing={16}>
           <Grid item xs={12}>
             <Typography variant="title" className={classes.title}>
-              Buyer
+              Seller
             </Typography>
             <List>
                 <ListItem>
                   <ListItemText
-                    primary={`Name: ${order._buyer.name}`}
+                    primary={`Name: ${order._seller.name}`}
                   />
                 </ListItem>
                 <ListItem>
                   <ListItemText
-                    primary={`E-Mail: ${order._buyer.email}`}
+                    primary={`E-Mail: ${order._seller.email}`}
                   />
                 </ListItem>
             </List>
@@ -236,7 +254,9 @@ class BuyerOrderPageToolbar extends React.Component {
 
   render() {
     const { numSelected, selected, rowsPerPage, page, orders, classes,
-      handleCancelOrder, handleShipOrder } = this.props;
+      handleOrderPayment } = this.props;
+
+    const order = this.getOnlySelectedOrder();
 
     return (
       <Toolbar
@@ -285,22 +305,14 @@ class BuyerOrderPageToolbar extends React.Component {
               </Dialog>
             </Grid>
           )}
-          {numSelected > 0 && (
+          {numSelected == 1 && (
             <Grid item className={classes.action}>
-              <Tooltip title="Ship">
-                <IconButton aria-label="Ship" onClick={handleShipOrder}>
-                  <LocalShippingIcon />
-                </IconButton>
-              </Tooltip>
-            </Grid>
-          )}
-          {numSelected > 0 && (
-            <Grid item className={classes.action}>
-              <Tooltip title="Cancel">
-                <IconButton aria-label="Cancel" onClick={handleCancelOrder}>
-                  <BlockIcon style={{color:red[900]}}/>
-                </IconButton>
-              </Tooltip>
+              <StripeCheckout
+                stripeKey={process.env.REACT_APP_STRIPE_KEY}
+                token={this.onToken}
+                amount={this.calculateTotalMoney(order)*100} // cents
+                currency="USD"
+              />
             </Grid>
           )}
         </Grid>
@@ -309,9 +321,11 @@ class BuyerOrderPageToolbar extends React.Component {
   }
 };
 
-BuyerOrderPageToolbar.propTypes = {
+SellOrderPageToolbar.propTypes = {
   classes: PropTypes.object.isRequired,
   numSelected: PropTypes.number.isRequired,
 };
 
-export default withStyles(toolbarStyles)(BuyerOrderPageToolbar);
+export default connect(null,{handlePayment})(
+  withStyles(toolbarStyles)(SellOrderPageToolbar)
+);

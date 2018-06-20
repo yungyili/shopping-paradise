@@ -278,8 +278,6 @@ class LoginForm extends Component {
           open={this.state.showErrorBar}
           autoHideDuration={6000}
           onClose={this.handleErrorBarClose}
-
-
         >
           <SnackbarContent
             className={classes.snackbar}
