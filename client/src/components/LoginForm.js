@@ -195,7 +195,7 @@ class LoginForm extends Component {
           signUpInfo[field.name] = signUp[field.name].value;
           return null;
       });
-      this.props.signUp(signUpInfo);
+      this.props.signUp(signUpInfo, this.props.history);
 
       this.handleSignUpClose();
     }

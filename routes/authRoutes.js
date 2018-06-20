@@ -70,6 +70,50 @@ module.exports = (app, passport)=> {
   app.post("/api/auth/sign-up",
     async (req, res) => {
       console.log("post /api/auth/sign-up: ", req.body);
-      res.sendStatus(401);
+
+      if (req.body === undefined || req.body === null){
+          res.sendStatus(400);
+          return;
+      }
+
+      const {userName, password, email} = req.body;
+      if (!userName || !password || !email){
+        console.log("post /api/auth/sign-up: invalid param");
+        res.sendStatus(400);
+        return;
+      }
+
+      const existedEmail = await User.findOne({email: email}).exec();
+      if (existedEmail){
+        console.log("post /api/auth/sign-up: email existed");
+        res.sendStatus(400);
+        return;
+      }
+
+      const existedUserName = await User.findOne({name: userName}).exec();
+      if (existedUserName){
+        console.log("post /api/auth/sign-up: user name existed");
+        res.sendStatus(400);
+        return;
+      }
+
+      const user = await new User({
+        name: userName,
+        email: email,
+        password: password
+      }).save();
+
+      if (user) {
+          var payload = {
+              id: user.id
+          };
+          var token = jwt.encode(payload, keys.jwtSecret);
+          res.json({
+              token: token
+          });
+      } else {
+          console.log("post /api/auth/sign-up: failed to create user");
+          res.sendStatus(400);
+      }
     });
 }

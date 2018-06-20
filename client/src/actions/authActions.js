@@ -122,7 +122,7 @@ export const fetchCurrentUser = () =>
         });
     };
 
-export const signUp = (signUpInfo) =>
+export const signUp = (signUpInfo, history) =>
   async (dispatch) => {
 
     console.log("signUp: ", signUpInfo)
@@ -137,6 +137,7 @@ export const signUp = (signUpInfo) =>
         const token = res.data.token;
         console.log('signUp: set jwtToken: ', token);
         localStorage.setItem('jwtToken', token);
+        history.push('/');
 
         dispatch({
           type: SIGNUP_OK,
