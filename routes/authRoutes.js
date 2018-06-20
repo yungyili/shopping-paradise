@@ -66,4 +66,10 @@ module.exports = (app, passport)=> {
           res.sendStatus(401);
       }
     });
+
+  app.post("/api/auth/sign-up",
+    async (req, res) => {
+      console.log("post /api/auth/sign-up: ", req.body);
+      res.sendStatus(401);
+    });
 }

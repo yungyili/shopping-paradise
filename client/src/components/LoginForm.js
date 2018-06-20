@@ -13,7 +13,12 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import {jwtLogin} from '../actions/authActions';
+import CloseIcon from '@material-ui/icons/Close';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import IconButton from '@material-ui/core/IconButton';
+import {jwtLogin, signUp} from '../actions/authActions';
+
 
 const styles = theme => ({
   loginForm: {
@@ -34,6 +39,17 @@ const styles = theme => ({
     width: '90%',
     margin: '0 5%'
   },
+  close: {
+    width: theme.spacing.unit * 4,
+    height: theme.spacing.unit * 4,
+  },
+  message: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  snackbar: {
+    backgroundColor: theme.palette.error.dark,
+  }
 });
 
 const signUpFields = [
@@ -76,11 +92,26 @@ class LoginForm extends Component {
           value: '',
           error: null
         },
-      }
+      },
+      showErrorBar: false,
+      errorMessage: null
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  updateUserStateByProps = (nextProps) => {
+    this.setState({
+      showErrorBar: nextProps.auth.error? true: false,
+      errorMessage: nextProps.auth.error
+    });
+  };
+
+  componentWillReceiveProps = (nextProps) => {
+    if (this.props !== nextProps) {
+      this.updateUserStateByProps(nextProps);
+    }
   }
 
   handleSubmit(event) {
@@ -97,6 +128,14 @@ class LoginForm extends Component {
     if (this.props.handleLeaveForLogin){
       this.props.handleLeaveForLogin();
     }
+  }
+
+  handleErrorBarOpen = () => {
+    this.setState({ showErrorBar: true });
+  }
+
+  handleErrorBarClose = () => {
+    this.setState({ showErrorBar: false });
   }
 
   handleSignUpInputChange = (event) => {
@@ -150,6 +189,13 @@ class LoginForm extends Component {
     this.setState(newState);
 
     if (validateOK) {
+      const signUpInfo = {};
+      signUpFields.map(field => {
+          signUpInfo[field.name] = signUp[field.name].value;
+          return null;
+      });
+      this.props.signUp(signUpInfo);
+
       this.handleSignUpClose();
     }
   }
@@ -216,6 +262,46 @@ class LoginForm extends Component {
     );
   }
 
+  renderErrorBar = () => {
+    const { classes } = this.props;
+    const message = `${this.state.errorMessage}`;
+
+    return (
+      <div>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+
+          open={this.state.showErrorBar}
+          autoHideDuration={6000}
+          onClose={this.handleErrorBarClose}
+
+
+        >
+          <SnackbarContent
+            className={classes.snackbar}
+            aria-describedby="client-snackbar"
+            message={message}
+            action={
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                className={classes.close}
+                onClick={this.handleErrorBarClose}
+              >
+                <CloseIcon />
+              </IconButton>
+            }
+          />
+        </Snackbar>
+      </div>
+    );
+  }
+
+
   render() {
     const { classes } = this.props;
 
@@ -252,6 +338,7 @@ class LoginForm extends Component {
             Login
           </Button>
         </form>
+        {this.renderErrorBar()}
       </div>
     );
   }
@@ -268,7 +355,7 @@ function mapStateToProps(state){
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps,{jwtLogin})(
+  connect(mapStateToProps,{jwtLogin, signUp})(
     withRouter(LoginForm)
   )
 );

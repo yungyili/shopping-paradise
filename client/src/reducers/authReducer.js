@@ -7,69 +7,86 @@ import {
   LOGOUT_FAIL,
   FETCHING_CURRENT_USER,
   FETCH_CURRENT_USER_OK,
-  FETCH_CURRENT_USER_FAIL
+  FETCH_CURRENT_USER_FAIL,
+  SIGNING_UP,
+  SIGNUP_OK,
+  SIGNUP_FAIL,
 } from '../actions/actionTypes';
 
-export default function authReducer(state={content:null, error:null, ongoing:false}, action) {
+
+const handleDoing = (action) => {
+  return {
+    content: null,
+    error: null,
+    ongoing: true
+  };
+}
+
+const handleOK = (action) => {
+  return {
+    content: action.payload.content,
+    error: null,
+    ongoing: false
+  };
+}
+
+const handleFail = (action) => {
+  return {
+    content: null,
+    error: action.payload.error,
+    ongoing: false
+  };
+}
+
+const makeEmptyAuth = () => {
+  return {
+    content: null,
+    error: null,
+    ongoing: false
+  }
+};
+
+export default function authReducer(state=makeEmptyAuth(), action) {
 
   switch(action.type){
   case LOGGING_IN:
-    return {
-      content: null,
-      error: null,
-      ongoing: true
-    }
+  case FETCHING_CURRENT_USER:
+  case SIGNING_UP:
+  {
+    return handleDoing(action);
+  }
+
   case LOGIN_OK:
-    return {
-      content: action.payload.content,
-      error: null,
-      ongoing: false
-    };
+  case FETCH_CURRENT_USER_OK:
+  case SIGNUP_OK:
+  {
+    return handleOK(action);
+  }
 
   case LOGIN_FAIL:
-    return {
-      content: null,
-      error: action.payload.error,
-      ongoing: false
-    }
-  case FETCHING_CURRENT_USER:
-    return {
-      content: null,
-      error: null,
-      ongoing: true
-    }
-  case FETCH_CURRENT_USER_OK:
-    return {
-      content: action.payload.content,
-      error: null,
-      ongoing: false
-    };
-
   case FETCH_CURRENT_USER_FAIL:
-    return {
-      content: null,
-      error: action.payload.error,
-      ongoing: false
-    }
+  case SIGNUP_FAIL:
+  {
+    return handleFail(action);
+  }
 
   case LOGGING_OUT:
     return {
-      content: null,
+      content: state.content,
       error: null,
       ongoing: true
-    }
+    };
+
   case LOGOUT_OK:
-    return {
-      content: null,
-      error: null,
-      ongoing: false
-    }
+    return makeEmptyAuth();
+
   case LOGOUT_FAIL:
-    return {
-      content: null,
-      error: action.payload.error,
-      ongoing: false
-    }
+  return {
+    content: state.content,
+    error: action.payload.error,
+    ongoing: false
+  };
+
 
   default:
     return state;

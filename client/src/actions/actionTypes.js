@@ -8,15 +8,20 @@ export const FETCHING_ITEM_COUNT = 'fetching_itemcount';
 export const FETCH_ITEM_COUNT_OK = 'fetch_item_count_ok';
 export const FETCH_ITEM_COUNT_FAIL = 'fetch_item_count_fail';
 export const FETCH_CATEGORY_PATH = 'fetch_category_path';
-export const LOGGING_IN = 'logging_in';
-export const LOGIN_OK = 'login_ok';
-export const LOGIN_FAIL = 'login_fail';
 export const FETCHING_CURRENT_USER = 'fetching_current_user';
 export const FETCH_CURRENT_USER_OK = 'fetch_current_user_ok';
 export const FETCH_CURRENT_USER_FAIL = 'fetch_current_user_fail';
+
+/* Auth */
+export const LOGGING_IN = 'logging_in';
+export const LOGIN_OK = 'login_ok';
+export const LOGIN_FAIL = 'login_fail';
 export const LOGGING_OUT = 'logging_out';
 export const LOGOUT_OK = 'logout_ok';
 export const LOGOUT_FAIL = 'logout_fail';
+export const SIGNING_UP = 'signing_up';
+export const SIGNUP_OK = 'signup_ok';
+export const SIGNUP_FAIL = 'signup_fail';
 
 /* Item */
 export const FETCHING_ITEM = 'fetching_item';

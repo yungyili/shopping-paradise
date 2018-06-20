@@ -8,7 +8,10 @@ import {
   LOGOUT_FAIL,
   FETCHING_CURRENT_USER,
   FETCH_CURRENT_USER_OK,
-  FETCH_CURRENT_USER_FAIL
+  FETCH_CURRENT_USER_FAIL,
+  SIGNING_UP,
+  SIGNUP_OK,
+  SIGNUP_FAIL,
 } from './actionTypes';
 
 
@@ -118,3 +121,41 @@ export const fetchCurrentUser = () =>
           });
         });
     };
+
+export const signUp = (signUpInfo) =>
+  async (dispatch) => {
+
+    console.log("signUp: ", signUpInfo)
+
+    dispatch({
+      type: SIGNING_UP,
+      payload: null
+    });
+
+    await axios.post('/api/auth/sign-up', signUpInfo)
+      .then((res)=>{
+        const token = res.data.token;
+        console.log('signUp: set jwtToken: ', token);
+        localStorage.setItem('jwtToken', token);
+
+        dispatch({
+          type: SIGNUP_OK,
+          payload: {
+            content: null,
+            error: null
+          }
+        });
+      })
+      .catch(e=>{
+        console.log("signUp: failed");
+        localStorage.removeItem('jwtToken');
+
+        dispatch({
+          type: SIGNUP_FAIL,
+          payload: {
+            content: null,
+            error: e
+          }
+        });
+      });
+  };
