@@ -33,6 +33,7 @@ class CheckoutPage1 extends Component {
     super(props);
 
     const {items, payment, receiverName, receiverAddress} = this.props.order.content;
+    console.log("CheckoutPage1: ctor: order=", this.props.order);
     items.map(item=>{
       if(item.isSelected === undefined){
         item.isSelected = true;
@@ -195,7 +196,7 @@ class CheckoutPage1 extends Component {
   }
 
   renderNavigationButtons(){
-    const {classes} = this.props;
+    const {classes, order} = this.props;
 
     return (
       <div>
@@ -204,7 +205,7 @@ class CheckoutPage1 extends Component {
           variant="raised"
           className={classes.button}
           component={this.LinkWrapper}
-          to='/'
+          to={order.content.naviFrom? order.content.naviFrom:'/'}
         >
           Back
         </Button>

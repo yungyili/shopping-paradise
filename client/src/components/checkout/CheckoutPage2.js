@@ -10,7 +10,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import {makeOrder} from '../../actions/orderActions';
+import {makeOrder, removeFromShoppingCart} from '../../actions/orderActions';
 
 const styles = {
   priceTag: { textAlign:'right'},
@@ -107,6 +107,7 @@ class CheckoutPage2 extends Component {
     const selectedItems = this.getSelectedItems(this.props.order.content.items);
     const newOrder = this.props.order.content;
     newOrder.items = selectedItems;
+    this.props.removeFromShoppingCart(selectedItems.map(item => item.item._id));
     this.props.makeOrder(newOrder);
     this.props.onNextPage();
   }
@@ -171,7 +172,7 @@ function mapStateToProps(state){
   };
 }
 
-export default connect(mapStateToProps,{makeOrder})(
+export default connect(mapStateToProps,{makeOrder, removeFromShoppingCart})(
   withStyles(styles)(
     withRouter(CheckoutPage2)
 ));

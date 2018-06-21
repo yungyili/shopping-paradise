@@ -20,21 +20,20 @@ import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import red from '@material-ui/core/colors/red';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import {fetchUserItems} from '../../actions/userActions';
-import {deleteItem} from '../../actions/userActions';
+import {removeFromShoppingCart, shoppingCartToOrder} from '../../actions/orderActions';
+import {SHOPPING_CART} from '../../constants/orders';
 
 const columnData = [
+  { id: 'picture', numeric: false, disablePadding: false, label: 'picture' },
   { id: 'title', numeric: false, disablePadding: true, label: 'title' },
   { id: 'description', numeric: false, disablePadding: false, label: 'description' },
   { id: 'price', numeric: true, disablePadding: false, label: 'price (usd)' },
-  { id: 'storage', numeric: true, disablePadding: false, label: 'storage' },
-  { id: 'category', numeric: false, disablePadding: false, label: 'category' },
-  { id: 'isBuyable', numeric: false, disablePadding: false, label: 'is buyable?' },
 ];
 
 const LinkWrapper = ({ ...props }) => (
@@ -128,7 +127,7 @@ const toolbarStyles = theme => ({
 });
 
 let BuyerShoppingCartToolbar = props => {
-  const { numSelected, selected, rowsPerPage, page, items, classes, handleDeleteItems } = props;
+  const { numSelected, selected, rowsPerPage, page, items, classes, handleDeleteItems, handleCheckout } = props;
 
  console.log("BuyerShoppingCartToolbar: selected=", selected);
 
@@ -165,11 +164,11 @@ let BuyerShoppingCartToolbar = props => {
           direction="row"
           justify="flex-end"
       >
-        {editItemId && (
+        {numSelected > 0 && (
           <Grid item className={classes.action}>
             <Tooltip title="Edit">
-              <IconButton aria-label="Edit" component={LinkWrapper} to={`/sell/item/${editItemId}/edit`}>
-                <EditIcon />
+              <IconButton aria-label="Edit" onClick={handleCheckout}>
+                <MonetizationOnIcon />
               </IconButton>
             </Tooltip>
           </Grid>
@@ -186,7 +185,7 @@ let BuyerShoppingCartToolbar = props => {
         {numSelected == 0 && (
           <Grid item className={classes.action}>
             <Tooltip title="Add Item">
-              <IconButton aria-label="add-item" component={LinkWrapper} to="/sell/item/add">
+              <IconButton aria-label="add-item" component={LinkWrapper} to="/">
                 <PlaylistAddIcon />
               </IconButton>
             </Tooltip>
@@ -215,6 +214,23 @@ const styles = theme => ({
   tableWrapper: {
     overflowX: 'auto',
   },
+  square: {
+    marginLeft: "auto",
+    marginRight: "auto",
+    height: "50px",
+    width: "50px",
+    textAlign: "center",
+    lineHeight: "50px",
+    marginTop: '0.2em',
+    marginBottom: '0.2em'
+  },
+  itemImage: {
+    maxHeight: "50px",
+    maxWidth: "50px",
+    width: "100%",
+    height: "100%",
+    textAlign: "center",
+  },
 });
 
 class BuyerShoppingCart extends React.Component {
@@ -223,36 +239,44 @@ class BuyerShoppingCart extends React.Component {
 
     this.state = {
       order: 'asc',
-      orderBy: 'calories',
+      orderBy: 'title',
       selected: [],
-      items: this.props.user.content.items,
+      items: this.getShoppingCartItems(),
       page: 0,
       rowsPerPage: 5,
     };
   }
 
+  getShoppingCartItems = () => {
+    let items;
+    try {
+      items = JSON.parse(localStorage.getItem(SHOPPING_CART));
+    } catch(err) {
+      items = [];
+    }
+    console.log("BuyerShoppingCart: ctor: items=", items);
+
+    return items && Array.isArray(items)? items: [];
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({items: this.getShoppingCartItems()});
+  }
+
   handleDeleteItems = () => {
     const {items, selected, page, rowsPerPage } = this.state;
     console.log("BuyerShoppingCart: handleDeleteItems, selected=", selected);
-    for (var i=0;i<selected.length; i++) {
-      this.props.deleteItem(selected[i]);
-    }
+    this.props.removeFromShoppingCart(selected);
+
     this.setState({ selected: [] });
-    this.props.history.push('/sell/item');
+    this.props.history.push('/buy');
   }
 
-  updateUserStateByProps = (nextProps) => {
-    this.setState({items: nextProps.user.content.items.slice()});
-  };
-
-  componentWillReceiveProps(nextProps){
-    if (this.props.user !== nextProps.user) {
-      this.updateUserStateByProps(nextProps);
-    }
-  }
-
-  componentDidMount() {
-    this.props.fetchUserItems();
+  handleCheckout = () => {
+    const { selected } = this.state;
+    this.props.shoppingCartToOrder(selected, this.props.location.pathname);
+    this.setState({ selected: [] });
+    this.props.history.push('/checkout');
   }
 
   handleRequestSort = (event, property) => {
@@ -273,7 +297,7 @@ class BuyerShoppingCart extends React.Component {
 
   handleSelectAllClick = (event, checked) => {
     if (checked) {
-      this.setState({ selected: this.state.items.map((n, id) => id) });
+      this.setState({ selected: this.state.items.map((n) => n._id) });
       return;
     }
     this.setState({ selected: [] });
@@ -322,6 +346,7 @@ class BuyerShoppingCart extends React.Component {
           <BuyerShoppingCartToolbar numSelected={selected.length} selected={selected}
             items={items} page={page} rowsPerPage={rowsPerPage}
             handleDeleteItems={this.handleDeleteItems}
+            handleCheckout={this.handleCheckout}
           />
           <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
@@ -334,7 +359,7 @@ class BuyerShoppingCart extends React.Component {
                 rowCount={items.length}
               />
               <TableBody>
-                {items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
+                {items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n, idx) => {
                   const isSelected = this.isSelected(n._id);
                   return (
                     <TableRow
@@ -343,20 +368,26 @@ class BuyerShoppingCart extends React.Component {
                       role="checkbox"
                       aria-checked={isSelected}
                       tabIndex={-1}
-                      key={n._id}
+                      key={idx}
                       selected={isSelected}
                     >
                       <TableCell padding="checkbox">
                         <Checkbox checked={isSelected} />
+                      </TableCell>
+                      <TableCell>
+                        <Paper className={classes.square}>
+                          <img
+                            src={n.pictureUrl}
+                            alt="Item Image"
+                            className={classes.itemImage}
+                          />
+                        </Paper>
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         {n.title}
                       </TableCell>
                       <TableCell>{n.description}</TableCell>
                       <TableCell numeric>{n.price}</TableCell>
-                      <TableCell numeric>{n.storage}</TableCell>
-                      <TableCell>{n._category}</TableCell>
-                      <TableCell>{n.isBuyable? "Yes":"No"}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -394,11 +425,12 @@ BuyerShoppingCart.propTypes = {
 
 function mapStateToProps(state){
   return {
-    user: state.user
+    user: state.user,
+    order: state.order
   };
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps,{fetchUserItems, deleteItem})(
+  connect(mapStateToProps,{fetchUserItems, removeFromShoppingCart, shoppingCartToOrder})(
     withRouter(BuyerShoppingCart)
   ));

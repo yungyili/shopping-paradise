@@ -7,6 +7,10 @@ import {
   PAYING,
   PAY_OK,
   PAY_FAIL,
+  ADD_TO_SHOPPING_CART,
+  CLEAR_SHOPPING_CART,
+  SHOPPING_CART_TO_ORDER,
+  REMOVE_FROM_SHOPPING_CART,
 } from '../actions/actionTypes';
 import { LEAVE_FOR_LOGIN } from '../constants/orders';
 
@@ -17,6 +21,8 @@ const makeEmptyOrder = () => {
 export default function currentOrderReducer(state=makeEmptyOrder(), action) {
   switch(action.type){
   case SET_CURRENT_ORDER:
+  case SHOPPING_CART_TO_ORDER:
+  {
     if (action.payload === null) {
       return makeEmptyOrder();
     }
@@ -27,12 +33,21 @@ export default function currentOrderReducer(state=makeEmptyOrder(), action) {
         ongoing: false
       }
     }
+  }
   case SET_LEAVE_FOR_LOGIN:
   {
     let newState = {...state};
     newState.content[LEAVE_FOR_LOGIN] = action.payload;
     return newState;
   }
+  case ADD_TO_SHOPPING_CART:
+  case CLEAR_SHOPPING_CART:
+  case REMOVE_FROM_SHOPPING_CART:
+  {
+    const newState = {...state};
+    return newState;
+  }
+
   case MAKING_ORDER:
     console.log("currentOrderReducer: making order, state=", state);
     return {

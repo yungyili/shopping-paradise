@@ -12,7 +12,7 @@ import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import {fetchItem} from '../actions/itemActions';
-import {setCurrentOrder, setLeaveForLogin} from '../actions/orderActions';
+import {setCurrentOrder, setLeaveForLogin, addToShoppingCart} from '../actions/orderActions';
 import BreadCumb from './BreadCumb';
 
 const styles = theme => ({
@@ -72,6 +72,15 @@ class Item extends Component {
     );
   }
 
+  handleAddShoopingCart = () => {
+    const {item} = this.props;
+    if(!item || !item.content || !item.content[0]) {
+      return;
+    }
+
+    this.props.addToShoppingCart(item.content[0]);
+  }
+
   handleSubmit(event) {
     console.log('Item: buy: ' + this.state.quantity);
     const { auth } = this.props;
@@ -86,10 +95,13 @@ class Item extends Component {
       return;
     }
 
-    this.props.setCurrentOrder({items: [{
-      item: item,
-      quantity: this.state.quantity,
-    }]});
+    this.props.setCurrentOrder({
+      items: [{
+        item: item,
+        quantity: this.state.quantity,
+      }],
+      naviFrom: this.props.location.pathname
+    });
 
     if (!auth.content){
       this.props.setLeaveForLogin(this.props.location.pathname);
@@ -129,7 +141,10 @@ class Item extends Component {
                 <IconButton aria-label="Add to wish list" className={classes.button}>
                   <FavoriteIcon />
                 </IconButton>
-                <Button variant="raised" color="secondary" className={classes.button}>
+                <Button
+                  variant="raised" color="secondary" className={classes.button}
+                  onClick={this.handleAddShoopingCart}
+                >
                   <AddShoppingCartIcon />
                 </Button>
                 {this.renderBuyButton()}
@@ -188,7 +203,7 @@ function mapStateToProps(state){
 }
 
 export default
-  connect(mapStateToProps,{fetchItem, setCurrentOrder, setLeaveForLogin})(
+  connect(mapStateToProps,{fetchItem, setCurrentOrder, setLeaveForLogin, addToShoppingCart})(
     withStyles(styles)(
       withRouter(Item)
     )

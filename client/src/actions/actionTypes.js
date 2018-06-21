@@ -44,6 +44,10 @@ export const PAY_FAIL = 'pay_fail';
 export const MAKING_ORDER = 'making_order';
 export const MAKE_ORDER_OK = 'make_order_ok';
 export const MAKE_ORDER_FAIL = 'make_order_fail';
+export const ADD_TO_SHOPPING_CART = 'add_to_shopping_cart';
+export const CLEAR_SHOPPING_CART = 'clear_shopping_cart';
+export const SHOPPING_CART_TO_ORDER = 'shopping_cart_to_order';
+export const REMOVE_FROM_SHOPPING_CART = 'remove_fromi_shopping_cart';
 
 /* User */
 export const FETCHING_USER_ITEMS = 'fetching_user_items';
