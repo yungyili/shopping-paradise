@@ -31,8 +31,11 @@ class CheckoutPage2 extends Component {
   }
 
   renderShoppingDetail() {
-    const {items} = this.props.order;
+    const {items} = this.props.order.content;
     const {classes} = this.props;
+
+    console.log("CheckoutPage2: renderShoppingDetail: order=", this.props.order);
+
     if(!items || items.length <=0 ){
       return <div>...</div>;
     }
