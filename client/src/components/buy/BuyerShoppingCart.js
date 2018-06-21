@@ -24,6 +24,9 @@ import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import red from '@material-ui/core/colors/red';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import CloseIcon from '@material-ui/icons/Close';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import {fetchUserItems} from '../../actions/userActions';
 import {removeFromShoppingCart, shoppingCartToOrder} from '../../actions/orderActions';
@@ -32,6 +35,7 @@ import {SHOPPING_CART} from '../../constants/orders';
 const columnData = [
   { id: 'picture', numeric: false, disablePadding: false, label: 'picture' },
   { id: 'title', numeric: false, disablePadding: true, label: 'title' },
+  { id: 'seller', numeric: false, disablePadding: false, label: 'seller' },
   { id: 'description', numeric: false, disablePadding: false, label: 'description' },
   { id: 'price', numeric: true, disablePadding: false, label: 'price (usd)' },
 ];
@@ -166,8 +170,8 @@ let BuyerShoppingCartToolbar = props => {
       >
         {numSelected > 0 && (
           <Grid item className={classes.action}>
-            <Tooltip title="Edit">
-              <IconButton aria-label="Edit" onClick={handleCheckout}>
+            <Tooltip title="Checkout">
+              <IconButton aria-label="Checkout" onClick={handleCheckout}>
                 <MonetizationOnIcon />
               </IconButton>
             </Tooltip>
@@ -244,7 +248,17 @@ class BuyerShoppingCart extends React.Component {
       items: this.getShoppingCartItems(),
       page: 0,
       rowsPerPage: 5,
+      showErrorBar: false,
+      errorMessage: null
     };
+  }
+
+  handleErrorBarOpen = () => {
+    this.setState({ showErrorBar: true });
+  }
+
+  handleErrorBarClose = () => {
+    this.setState({ showErrorBar: false });
   }
 
   getShoppingCartItems = () => {
@@ -273,10 +287,29 @@ class BuyerShoppingCart extends React.Component {
   }
 
   handleCheckout = () => {
-    const { selected } = this.state;
-    this.props.shoppingCartToOrder(selected, this.props.location.pathname);
-    this.setState({ selected: [] });
-    this.props.history.push('/checkout');
+    const {items, selected } = this.state;
+
+    let errorMessage = null;
+
+    if(items.length === 0 || selected.length === 0){
+      return;
+    }
+
+    const sellerId = items.find(item => item._id === selected[0])._user;
+    items.map(item => {
+      if (selected.find(id => (item._id === id)) && item._user !== sellerId) {
+        errorMessage = 'For checkout, selected items must belong to same seller';
+      }
+    });
+
+    if (errorMessage){
+      this.setState({errorMessage});
+      this.handleErrorBarOpen();
+    } else {
+      this.props.shoppingCartToOrder(selected, this.props.location.pathname);
+      this.setState({ selected: [] });
+      this.props.history.push('/checkout');
+    }
   }
 
   handleRequestSort = (event, property) => {
@@ -334,6 +367,43 @@ class BuyerShoppingCart extends React.Component {
 
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
+  renderErrorBar = () => {
+    const { classes } = this.props;
+    const message = `${this.state.errorMessage}`;
+
+    return (
+      <div>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+
+          open={this.state.showErrorBar}
+          autoHideDuration={6000}
+          onClose={this.handleErrorBarClose}
+        >
+          <SnackbarContent
+            className={classes.snackbar}
+            aria-describedby="client-snackbar"
+            message={message}
+            action={
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                className={classes.close}
+                onClick={this.handleErrorBarClose}
+              >
+                <CloseIcon />
+              </IconButton>
+            }
+          />
+        </Snackbar>
+      </div>
+    );
+  }
+
   render() {
     const { classes, user } = this.props;
     const { items, order, orderBy, selected, rowsPerPage, page } = this.state;
@@ -386,6 +456,7 @@ class BuyerShoppingCart extends React.Component {
                       <TableCell component="th" scope="row" padding="none">
                         {n.title}
                       </TableCell>
+                      <TableCell>{n._user}</TableCell>
                       <TableCell>{n.description}</TableCell>
                       <TableCell numeric>{n.price}</TableCell>
                     </TableRow>
@@ -414,6 +485,7 @@ class BuyerShoppingCart extends React.Component {
             onChangeRowsPerPage={this.handleChangeRowsPerPage}
           />
         </Paper>
+        {this.renderErrorBar()}
       </div>
     );
   }
