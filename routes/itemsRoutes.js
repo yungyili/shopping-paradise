@@ -10,7 +10,7 @@ const createItem = async (req, res) => {
   const {title, description, pictureUrl,
     price, storage, _category, isBuyable} = req.body;
 
-  const _user = req.user.id;
+  const _user = req.user._id;
 
   const newItem = await new Item({
     title: title,
@@ -45,7 +45,7 @@ const updateItem = async (req, res) => {
   const newData = {title, description, pictureUrl,
     price, storage, _category, isBuyable};
 
-  const _user = req.user.id;
+  const _user = req.user._id;
 
   try {
     await Item.findOneAndUpdate({_id: itemId},
@@ -80,7 +80,7 @@ const deleteItem = async (req, res) => {
   console.log("delete /api/item:", req.body);
 
   const itemId = req.params.id;
-  const _user = req.user.id;
+  const _user = req.user._id;
 
   await Item.findOneAndDelete({_id: itemId, _user: _user},async function(err, doc){
     if (err) {

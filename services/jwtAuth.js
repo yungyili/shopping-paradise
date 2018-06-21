@@ -14,10 +14,10 @@ module.exports = (passport) => {
   var strategy = new Strategy(params,
     async (payload, done) => {
       console.log("JWTStragety: ", payload);
-      const user = await User.findById(payload.id).exec();
+      const user = await User.findById(payload._id).exec();
       if (user) {
         return done(null, {
-          id: user.id
+          _id: user._id
         });
       } else {
         return done(new Error('User not found'), null);

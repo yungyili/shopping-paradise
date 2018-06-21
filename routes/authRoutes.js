@@ -3,6 +3,28 @@ const keys = require('../config/keys');
 const mongoose = require('mongoose');
 const User = mongoose.model('users');
 
+
+const getCurrentUser = async (req, res) => {
+  if (req.user){
+    const userId = req.user._id;
+    const user = await User.findOne({_id: userId}, (err, user) => {
+      if (err){
+        res.sendStatus(401);
+        return;
+      }
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email
+      })
+    });
+
+    return;
+  } else {
+    res.sendStatus(401);
+  }
+}
+
 module.exports = (app, passport)=> {
 
   /* For Google auth */
@@ -10,7 +32,7 @@ module.exports = (app, passport)=> {
     (req, res, next) => {
       console.log("/api/auth/current_user: google: req.user", req.user);
       if (req.user){
-        res.send(req.user);
+        getCurrentUser(req, res);
         return;
       }
       next();
@@ -18,11 +40,7 @@ module.exports = (app, passport)=> {
     passport.authenticate('jwt', keys.jwtSession),
     (req, res) => {
       console.log("/api/auth/current_user: jwt: req.user", req.user);
-      if (req.user){
-        res.send(req.user);
-      } else {
-        res.send({});
-      }
+      getCurrentUser(req, res);
     }
   );
 
@@ -53,11 +71,13 @@ module.exports = (app, passport)=> {
           const user = await User.findOne({'email':email, 'password':password}).exec();
           if (user) {
               var payload = {
-                  id: user.id
+                  _id: user.id
               };
               var token = jwt.encode(payload, keys.jwtSecret);
               res.json({
-                  token: token
+                  token: token,
+                  name: user.name,
+                  email: user.email
               });
           } else {
               res.sendStatus(401);
@@ -105,11 +125,14 @@ module.exports = (app, passport)=> {
 
       if (user) {
           var payload = {
-              id: user.id
+              _id: user.id
           };
           var token = jwt.encode(payload, keys.jwtSecret);
           res.json({
-              token: token
+              token: token,
+              _id: user.id,
+              name: user.name,
+              email: user.email
           });
       } else {
           console.log("post /api/auth/sign-up: failed to create user");

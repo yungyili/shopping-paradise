@@ -4,11 +4,13 @@ import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import PersonIcon from '@material-ui/icons/Person';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import {fetchCurrentUser, logout} from '../../actions/authActions';
 import {setLeaveForLogin} from '../../actions/orderActions';
@@ -74,8 +76,44 @@ class SellHeader extends Component {
     );
   }
 
+  renderUser = () => {
+    const { classes, auth } = this.props;
+
+    var userName = '';
+    try {
+      if (typeof auth.content.name === "string"){
+        userName = auth.content.name;
+      }
+    } catch (err) {
+      userName = '';
+    }
+
+    if (userName){
+      return (
+        <div>
+          <Grid container spacing={0}>
+            <Grid item>
+              <PersonIcon />
+            </Grid>
+            <Grid item>
+              <Typography
+              variant="title"
+              color="inherit"
+              >
+                {userName}
+              </Typography>
+            </Grid>
+          </Grid>
+        </div>
+      )
+    } else {
+      return <div></div>;
+    }
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, auth } = this.props;
+
     return (
       <div className={classes.header}>
         <AppBar>
@@ -89,6 +127,7 @@ class SellHeader extends Component {
               Shopping Paradise
             </Typography>
 
+            {this.renderUser()}
             {this.renderComponentsOnTheRight()}
           </Toolbar>
         </AppBar>

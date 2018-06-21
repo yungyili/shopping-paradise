@@ -54,7 +54,7 @@ const handlePayment = async (req, res) => {
 const makeOrder = async (req, res) => {
   console.log("make order: req.body=", req.body);
 
-  if (!req.body) {
+  if (!req.body || !req.user || !req.user._id) {
     res.sendStatus(400);
     return;
   }
@@ -99,7 +99,7 @@ const makeOrder = async (req, res) => {
   }
 
   const newOrder = await new Order({
-    _buyer: req.user.id,
+    _buyer: req.user._id,
     _seller: sellerId,
     items: items.map(item=>item.item),
     quantities: items.map(item=>item.quantity),

@@ -7,7 +7,7 @@ const Item = mongoose.model('items');
 const keys = require('../config/keys');
 
 const getUserItems = async (req, res) => {
-  await Item.find({_user: req.user.id}, function(err, items){
+  await Item.find({_user: req.user._id}, function(err, items){
     if (err){
       res.sendStatus(400);
       return;
@@ -18,21 +18,27 @@ const getUserItems = async (req, res) => {
 
 const normalizeOrder = async (order) => {
   console.log("normalizeOrder: order=", order);
-  const buyer = (({ name , email, _id }) => ({ name, email, _id }))
-    (await User.findOne({_id: order._buyer}).exec());
+  let buyer, seller, items;
 
-  const seller = (({ name , email, _id }) => ({ name, email, _id }))
-    (await User.findOne({_id: order._seller}).exec());
+  try{
+    buyer = (({ name , email, _id }) => ({ name, email, _id }))
+      (await User.findOne({_id: order._buyer}).exec());
 
-  const combinedQuery = {
-    $or: order.items.map(id => {
-      return { _id: id };
-    })
-  };
+    seller = (({ name , email, _id }) => ({ name, email, _id }))
+      (await User.findOne({_id: order._seller}).exec());
 
-  const items = (await Item.find(combinedQuery).exec())
-    .map((({ title , price, storage, _category, pictureUrl }) =>
-      ({ title , price, storage, _category, pictureUrl })));
+    const combinedQuery = {
+      $or: order.items.map(id => {
+        return { _id: id };
+      })
+    };
+
+    items = (await Item.find(combinedQuery).exec())
+      .map((({ title , price, storage, _category, pictureUrl }) =>
+        ({ title , price, storage, _category, pictureUrl })));
+
+  } catch(err) {
+  }
 
   const ret = {
     _id: order._id,
@@ -54,7 +60,7 @@ const normalizeOrder = async (order) => {
 
 const getOrders = async (req, res, character) => {
   console.log("getOrders: character=", character);
-  const orders = await Order.find({[character]: req.user.id}).exec();
+  const orders = await Order.find({[character]: req.user._id}).exec();
   console.log("getOrders: orders=", orders);
 
   const normalizedOrder = await Promise.all(orders.map(async (order) => {return await normalizeOrder(order);} ));
@@ -87,7 +93,7 @@ const sellerUpdateOrders = async (req,res) => {
   await Order.updateOne(
   {
     _id: orderId,
-    _seller: req.user.id
+    _seller: req.user._id
   }, {
     $set:{...modify}
   }, async function(err){
@@ -126,7 +132,7 @@ module.exports = (app, passport) => {
   app.get("/api/user", /*auth.authenticate(),*/
     async (req, res) => {
       console.log("get /user:", req.user);
-      const user = await User.findOne({_id: req.user.id}).exec();
+      const user = await User.findOne({_id: req.user._id}).exec();
 
       res.json(user);
     });

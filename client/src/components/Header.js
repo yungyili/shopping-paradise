@@ -4,6 +4,7 @@ import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -12,7 +13,6 @@ import IconButton from '@material-ui/core/IconButton';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import PersonIcon from '@material-ui/icons/Person';
-import SearchIcon from '@material-ui/icons/Search';
 import {fetchCurrentUser, logout} from '../actions/authActions';
 
 const styles = {
@@ -80,8 +80,44 @@ class Header extends Component {
     );
   }
 
+  renderUser = () => {
+    const { classes, auth } = this.props;
+
+    var userName = '';
+    try {
+      if (typeof auth.content.name === "string"){
+        userName = auth.content.name;
+      }
+    } catch (err) {
+      userName = '';
+    }
+
+    if (userName){
+      return (
+        <div>
+          <Grid container spacing={0}>
+            <Grid item>
+              <PersonIcon />
+            </Grid>
+            <Grid item>
+              <Typography
+              variant="title"
+              color="inherit"
+              >
+                {userName}
+              </Typography>
+            </Grid>
+          </Grid>
+        </div>
+      )
+    } else {
+      return <div></div>;
+    }
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, auth } = this.props;
+
     return (
       <div className={classes.header}>
         <AppBar>
@@ -95,10 +131,7 @@ class Header extends Component {
               Shopping Paradise
             </Typography>
 
-            <div>
-              <SearchIcon className={classes.icon} />
-              <input type="text" placeholder="Search.." />
-            </div>
+            {this.renderUser()}
             {this.renderComponentsOnTheRight()}
           </Toolbar>
         </AppBar>

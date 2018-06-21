@@ -230,6 +230,14 @@ class BuyerOrderPage extends React.Component {
               <TableBody>
                 {orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
                   const isSelected = this.isSelected(n._id);
+
+                  try {
+                    const {_id, _seller, items, quantities, total, isPaid, isShipped, isCanceled} = n;
+                    const {length} = items;
+                  } catch(err){
+                    return null;
+                  }
+
                   return (
                     <TableRow
                       hover
@@ -244,7 +252,7 @@ class BuyerOrderPage extends React.Component {
                         <Checkbox checked={isSelected} />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {n._seller.name}
+                        {n._seller? n._seller.name:"N/A"}
                       </TableCell>
                       <TableCell>{this.itemsToDescriptions(n.items, n.quantities)}</TableCell>
                       <TableCell numeric>{n.total}</TableCell>

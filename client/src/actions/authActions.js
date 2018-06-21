@@ -142,7 +142,7 @@ export const signUp = (signUpInfo, history) =>
         dispatch({
           type: SIGNUP_OK,
           payload: {
-            content: null,
+            content: res.data,
             error: null
           }
         });
