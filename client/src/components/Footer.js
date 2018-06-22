@@ -10,7 +10,7 @@ const styles = theme => ({
     lineHeight: '100px',
     textAlign: 'center',
     verticalAlign: 'middle',
-    color: 'white',
+    color: 'grey',
     width: '100%',
   },
   link : {

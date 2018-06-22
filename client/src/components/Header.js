@@ -20,7 +20,7 @@ import {fetchCurrentUser, logout} from '../actions/authActions';
 const styles = {
   header: {
     color: 'white',
-    marginBottom: '2em'
+    marginBottom: '2em',
   },
   flex: {
     flex: 1,
@@ -193,7 +193,20 @@ class Header extends Component {
         paddingRight: '1em'
       },
     });
+  }
 
+  renderStickBarSpacer = () => {
+    const Component = (props) => (
+      <div style={props.style}></div>
+    );
+    return this.applyMediaQuery(Component, {
+      xs:{
+        height:'7em',
+      },
+      sm:{
+        display:'hidden',
+      },
+    });
   }
 
   render() {
@@ -201,22 +214,39 @@ class Header extends Component {
     const { theme } = this.props;
     const primaryColor = theme.palette.primary.main;
 
-    return (
-      <div style={{backgroundColor: primaryColor}} className={classes.header}>
-        <Grid container spacing={16}
-          direction="row"
-          justify="flex-end"
-          alignItems="center"
+    const Component = (props) => (
+      <div>
+        <div
+          style={props.style}
+          className={classes.header}
         >
-          <Grid item xs={12} sm={6}>
-            {this.renderComponentsOnTheLeft()}
+          <Grid container spacing={16}
+            direction="row"
+            justify="flex-end"
+            alignItems="center"
+          >
+            <Grid item xs={12} sm={6}>
+              {this.renderComponentsOnTheLeft()}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              {this.renderComponentsOnTheRight()}
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            {this.renderComponentsOnTheRight()}
-          </Grid>
-        </Grid>
+        </div>
+        {this.renderStickBarSpacer()}
       </div>
     );
+
+    return this.applyMediaQuery(Component, {
+      xs:{
+        backgroundColor: primaryColor,
+        position: 'fixed',
+        width: '100%',
+      },
+      sm:{
+        backgroundColor: primaryColor,
+      },
+    });
   }
 }
 
