@@ -9,6 +9,7 @@ import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import MediaQuery from 'react-responsive';
 import {fetchCategory} from '../actions/categoryActions';
 import {fetchCategoryItem, fetchItemCount} from '../actions/itemActions';
 import BreadCumb from './BreadCumb';
@@ -18,10 +19,21 @@ const styles = theme => ({
   root: {
     flexGrow: 1,
   },
-  image: {
+  imageContainer: {
     padding: theme.spacing.unit,
     textAlign: 'left',
     color: theme.palette.text.secondary,
+    padding: '0 1em',
+  },
+  image: {
+    maxWidth: '100%',
+    maxHeight: '200px',
+    /* IE7-8 need help adjusting responsive images */
+    width: 'auto\9',
+    /* Part 2: Scale the height according to the width, otherwise you get stretching */
+    height: 'auto',
+    verticalAlign: 'middle',
+    borderRadius: '10px',
   },
   chip: {
     margin: theme.spacing.unit,
@@ -31,7 +43,7 @@ const styles = theme => ({
     marginBottom: '1%'
   },
   items: {
-    marginTop: '3%'
+    margin: '1em 1em'
   },
   pagination: {
     direction: 'row',
@@ -39,13 +51,26 @@ const styles = theme => ({
   }
 });
 
+const applyMediaQuery = (Component, styles) => {
+  return (
+    <div>
+      <MediaQuery minWidth={601}>
+        <Component style={styles.sm}/>
+      </MediaQuery>
+      <MediaQuery maxWidth={600}>
+        <Component style={styles.xs}/>
+      </MediaQuery>
+    </div>
+  );
+}
+
 class BuyersLanding extends Component {
   constructor(props){
     super(props);
 
     this.state = {
       pageNum: 1,
-      perPage: 2,
+      perPage: 16,
       categoryId: this.props.match.params.id? this.props.match.params.id: 'root'
     }
   }
@@ -248,7 +273,7 @@ class BuyersLanding extends Component {
           item.content.map(item=>{
             return (
               <Grid item
-                className={classes.image} xs={6} sm={3}
+                className={classes.imageContainer} xs={6} sm={3}
                 key={item._id}
                 to={`/item/${item._id}`}
                 component={this.LinkWrapper}
@@ -256,8 +281,7 @@ class BuyersLanding extends Component {
                 <img
                   src={item.pictureUrl}
                   alt={item.title}
-                  height={180}
-                  style={{borderRadius: 5}}
+                  className={classes.image}
                 />
                 <div>${item.price}</div>
               </Grid>

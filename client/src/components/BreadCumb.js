@@ -1,10 +1,12 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
   root: {
-    flexGrow: 1,
+    paddingLeft: '1em',
+    verticalAlign: 'middle'
   },
   image: {
     padding: theme.spacing.unit,
@@ -28,7 +30,7 @@ const styles = theme => ({
 });
 
 const BreadCumb = (props) => {
-    const { path, tailLink } = props;
+    const { path, tailLink, classes } = props;
 
     if (!path){
       return <div>...</div>;
@@ -54,7 +56,16 @@ const BreadCumb = (props) => {
       }
     }
 
-    return ret;
+    return (
+      <div className={classes.root}>
+      <Typography
+        variant="body1"
+        color="inherit"
+      >
+        {ret}
+      </Typography>
+      </div>
+    );
 }
 
 export default withStyles(styles)(BreadCumb);
