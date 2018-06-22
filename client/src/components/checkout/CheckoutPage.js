@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {connect} from 'react-redux';
 import Header from './CheckoutHeader';
-import Footer from './CheckoutFooter';
+import Footer from '../Footer';
 import CheckoutPage1 from './CheckoutPage1';
 import CheckoutPage2 from './CheckoutPage2';
 import CheckoutPage3 from './CheckoutPage3';

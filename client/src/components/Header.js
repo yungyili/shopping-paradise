@@ -53,13 +53,36 @@ class Header extends Component {
   }
 
   renderSellButton = () => {
+    const {pathname} = this.props.location;
+    if (pathname.match(/^\/sell/g)) {
+      return null;
+    }
+
     const {classes} = this.props;
     return (
       <Button className={classes.button} to={"/sell"} component={this.LinkWrapper}>Sell</Button>
     );
   }
 
+  renderBuyButton = () => {
+    const {pathname} = this.props.location;
+    if (pathname.match(/^\/buy/g) || pathname==="/" || pathname === "/#") {
+      return null;
+    }
+
+    const {classes} = this.props;
+
+    return (
+      <Button className={classes.button} to={"/"} component={this.LinkWrapper}>Buy</Button>
+    );
+  }
+
   renderShoppingCart = () => {
+    const {pathname} = this.props.location;
+    if (pathname.match(/^\/(buy|sell)/g)) {
+      return null;
+    }
+
     const {classes} = this.props;
     return (
       <IconButton
@@ -143,7 +166,8 @@ class Header extends Component {
           color="inherit"
           className={classes.flex}
           onClick={()=>{this.props.history.push('/')}}
-          style={props.style}
+          style={{...props.style, textTransform:'none'}}
+          component={Button}
         >
           Shopping Paradise
         </Typography>
@@ -170,6 +194,9 @@ class Header extends Component {
         </Grid>
         <Grid item>
           {this.renderSellButton()}
+        </Grid>
+        <Grid item>
+          {this.renderBuyButton()}
         </Grid>
         <Grid item>
           {this.renderShoppingCart()}

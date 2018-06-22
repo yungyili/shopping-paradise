@@ -10,8 +10,8 @@ import Paper from '@material-ui/core/Paper';
 import ListItemText from '@material-ui/core/ListItemText';
 import BuyerShoppingCart from './BuyerShoppingCart';
 import BuyerOrderPage from './BuyerOrderPage';
-import Header from './BuyerHeader';
-import Footer from './BuyerFooter';
+import Header from '../Header';
+import Footer from '../Footer';
 import NotFound from '../NotFound';
 
 const styles = theme => ({

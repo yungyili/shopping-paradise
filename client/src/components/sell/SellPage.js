@@ -6,8 +6,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import Header from './SellHeader';
-import Footer from './SellFooter';
+import Header from '../Header';
+import Footer from '../Footer';
 import { setLeaveForLogin} from '../../actions/orderActions';
 import SellMainPage from './SellMainPage';
 import LoginForm from '../LoginForm';
@@ -66,7 +66,7 @@ class SellPage extends Component {
     return (
       <div>
         <Header />
-          {this.renderLoginOrLanding()}
+        {this.renderLoginOrLanding()}
         <Footer />
       </div>
     );
