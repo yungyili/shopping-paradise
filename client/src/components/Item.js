@@ -19,10 +19,12 @@ const styles = theme => ({
   root: {
     flexGrow: 1,
   },
+  imageContainer: {
+    width: '100%'
+  },
   image: {
-    width: '100%',
-    maxWidth: '300px',
-    height: 'auto'
+    width: 'auto',
+    maxHeight: '300px',
   },
   divider: {
     marginTop: '1%',
@@ -128,33 +130,41 @@ class Item extends Component {
       return (
         <div className={classes.root}>
           <Grid container spacing={24}>
-            <Grid item xs={6}>
-              <img src={item.pictureUrl} alt={item.title} className={classes.image}></img>
+            <Grid item xs={12} sm={6}>
+              <Grid container spacing={24} justify="center">
+                <Grid item>
+                  <img src={item.pictureUrl} alt={item.title} className={classes.image}></img>
+                </Grid>
+              </Grid>
             </Grid>
 
-            <Grid item xs={6}>
-              <form onSubmit={this.handleSubmit}>
-                <h2>{item.title}</h2>
-                <p>{item.description}</p>
-                <h1>$ {item.price}</h1>
+            <Grid item xs={12} sm={6}>
+              <Grid container spacing={24}>
 
-                <IconButton aria-label="Add to wish list" className={classes.button}>
-                  <FavoriteIcon />
-                </IconButton>
-                <Button
-                  variant="raised" color="secondary" className={classes.button}
-                  onClick={this.handleAddShoopingCart}
-                >
-                  <AddShoppingCartIcon />
-                </Button>
-                {this.renderBuyButton()}
-                <select name="quantity" value={this.state.quantity} onChange={this.handleInputChange}>
-                  <option key={0} value={0} disabled>...</option>
-                  {this.renderNumberOptions(item.storage)}
-                </select>
-              </form>
+                <Grid item xs={12}>
+                  <h2>{item.title}</h2>
+                  <p>{item.description}</p>
+                  <h1>$ {item.price}</h1>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Button
+                    variant="raised" color="secondary" className={classes.button}
+                    onClick={this.handleAddShoopingCart}
+                  >
+                    <AddShoppingCartIcon />
+                  </Button>
+                  <form onSubmit={this.handleSubmit}>
+                    {this.renderBuyButton()}
+                    <select name="quantity" value={this.state.quantity} onChange={this.handleInputChange}>
+                      <option key={0} value={0} disabled>...</option>
+                      {this.renderNumberOptions(item.storage)}
+                    </select>
+                  </form>
+                </Grid>
+              </Grid>
+
             </Grid>
-
           </Grid>
         </div>
       );

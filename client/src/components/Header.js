@@ -66,7 +66,7 @@ class Header extends Component {
 
   renderBuyButton = () => {
     const {pathname} = this.props.location;
-    if (pathname.match(/^\/buy/g) || pathname==="/" || pathname === "/#") {
+    if (pathname.match(/^\/(buy|category|item)/g) || pathname==="/" || pathname === "/#") {
       return null;
     }
 
@@ -175,7 +175,7 @@ class Header extends Component {
 
     return this.applyMediaQuery(Component, {
       xs:{
-        textAlign: 'center',
+        margin: '0 auto',
         paddingTop: '1em'
       },
       sm:{
