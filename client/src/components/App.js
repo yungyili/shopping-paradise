@@ -12,8 +12,8 @@ import BuyerWorkspaceMainPage from './buy/BuyerWorkspaceMainPage';
 
 const styles = theme => ({
   root: {
-    margin: '0 10%',
-    marginTop: '3%'
+    maxWidth: '1200px',
+    margin: '0 auto',
   },
 });
 

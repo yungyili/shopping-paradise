@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import { withRouter } from 'react-router';
+import { withTheme } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
@@ -13,11 +14,13 @@ import IconButton from '@material-ui/core/IconButton';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import PersonIcon from '@material-ui/icons/Person';
+import MediaQuery from 'react-responsive';
 import {fetchCurrentUser, logout} from '../actions/authActions';
 
 const styles = {
   header: {
-    flexGrow: 1
+    color: 'white',
+    marginBottom: '2em'
   },
   flex: {
     flex: 1,
@@ -31,7 +34,7 @@ const styles = {
   },
   button: {
     color: 'white'
-  }
+  },
 };
 
 
@@ -49,8 +52,27 @@ class Header extends Component {
     this.props.history.push('/login');
   }
 
-  renderLoginButton(){
-    console.log("renderLoginButton: auth=", this.props.auth);
+  renderSellButton = () => {
+    const {classes} = this.props;
+    return (
+      <Button className={classes.button} to={"/sell"} component={this.LinkWrapper}>Sell</Button>
+    );
+  }
+
+  renderShoppingCart = () => {
+    const {classes} = this.props;
+    return (
+      <IconButton
+        key={0} className={classes.button} aria-label="Shopping Cart"
+        to={"/buy"} component={this.LinkWrapper}
+      >
+        <ShoppingCartIcon />
+      </IconButton>
+    );
+  }
+
+  renderLoginOutButton = () => {
+    console.log("renderLoginOutButton: auth=", this.props.auth);
     const {auth, classes} = this.props;
 
     if (auth.ongoing){
@@ -62,22 +84,6 @@ class Header extends Component {
         return (<IconButton className={classes.button} onClick={()=>this.props.logout()}><ExitToAppIcon /></IconButton>);
       }
     }
-  }
-
-  renderComponentsOnTheRight() {
-    const {classes} = this.props;
-    return (
-      <div>
-        <Button className={classes.button} to={"/sell"} component={this.LinkWrapper}>Sell</Button>
-        <IconButton
-          key={0} className={classes.button} aria-label="Shopping Cart"
-          to={"/buy"} component={this.LinkWrapper}
-        >
-          <ShoppingCartIcon />
-        </IconButton>
-        {this.renderLoginButton()}
-      </div>
-    );
   }
 
   renderUser = () => {
@@ -115,27 +121,100 @@ class Header extends Component {
     }
   }
 
+  applyMediaQuery = (Component, styles) => {
+    return (
+      <div>
+        <MediaQuery minWidth={601}>
+          <Component style={styles.sm}/>
+        </MediaQuery>
+        <MediaQuery maxWidth={600}>
+          <Component style={styles.xs}/>
+        </MediaQuery>
+      </div>
+    );
+  }
+
+  renderComponentsOnTheLeft = () => {
+    const { classes } = this.props;
+
+    const Component = (props) => (
+        <Typography
+          variant="title"
+          color="inherit"
+          className={classes.flex}
+          onClick={()=>{this.props.history.push('/')}}
+          style={props.style}
+        >
+          Shopping Paradise
+        </Typography>
+    );
+
+    return this.applyMediaQuery(Component, {
+      xs:{
+        textAlign: 'center',
+        paddingTop: '1em'
+      },
+      sm:{
+        marginLeft: '1em'
+      },
+    });
+  }
+
+  renderComponentsOnTheRight = () => {
+    const Component = (props) =>  (
+      <Grid container spacing={16}
+        style={props.style}
+      >
+        <Grid item>
+          {this.renderUser()}
+        </Grid>
+        <Grid item>
+          {this.renderSellButton()}
+        </Grid>
+        <Grid item>
+          {this.renderShoppingCart()}
+        </Grid>
+        <Grid item>
+          {this.renderLoginOutButton()}
+        </Grid>
+      </Grid>
+    );
+
+    return this.applyMediaQuery(Component, {
+      xs:{
+        direction: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      sm:{
+        direction: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingRight: '1em'
+      },
+    });
+
+  }
+
   render() {
     const { classes, auth } = this.props;
+    const { theme } = this.props;
+    const primaryColor = theme.palette.primary.main;
 
     return (
-      <div className={classes.header}>
-        <AppBar>
-          <Toolbar>
-            <Typography
-              variant="title"
-              color="inherit"
-              className={classes.flex}
-              onClick={()=>{this.props.history.push('/')}}
-            >
-              Shopping Paradise
-            </Typography>
-
-            {this.renderUser()}
+      <div style={{backgroundColor: primaryColor}} className={classes.header}>
+        <Grid container spacing={16}
+          direction="row"
+          justify="flex-end"
+          alignItems="center"
+        >
+          <Grid item xs={12} sm={6}>
+            {this.renderComponentsOnTheLeft()}
+          </Grid>
+          <Grid item xs={12} sm={6}>
             {this.renderComponentsOnTheRight()}
-          </Toolbar>
-        </AppBar>
-        <div style={{ paddingTop: 64 }}></div>
+          </Grid>
+        </Grid>
       </div>
     );
   }
@@ -153,5 +232,5 @@ function mapStateToProps(state){
 
 export default withStyles(styles)(
   connect(mapStateToProps,{fetchCurrentUser, logout})(
-    withRouter(Header)
+    withRouter(withTheme()(Header))
   ));
