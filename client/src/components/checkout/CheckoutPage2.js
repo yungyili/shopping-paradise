@@ -48,7 +48,6 @@ class CheckoutPage2 extends Component {
               <TableCell>Item Name</TableCell>
               <TableCell numeric>Price</TableCell>
               <TableCell numeric>Quantity</TableCell>
-              <TableCell numeric>Item Total</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -61,7 +60,6 @@ class CheckoutPage2 extends Component {
                   </TableCell>
                   <TableCell numeric>{item.item.price}</TableCell>
                   <TableCell numeric>{item.quantity}</TableCell>
-                  <TableCell numeric>{item.item.price*item.quantity}</TableCell>
                 </TableRow>
               );
             })}
