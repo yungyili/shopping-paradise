@@ -228,7 +228,7 @@ class Header extends Component {
     );
     return this.applyMediaQuery(Component, {
       xs:{
-        height:'7em',
+        height:'8em',
       },
       sm:{
         display:'hidden',
