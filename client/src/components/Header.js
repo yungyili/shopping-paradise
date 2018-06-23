@@ -129,7 +129,7 @@ class Header extends Component {
           </Grid>
           <Grid item>
             <Typography
-            variant="title"
+            variant="body1"
             color="inherit"
             >
               {userName}
