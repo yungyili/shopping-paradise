@@ -20,11 +20,18 @@ module.exports = (passport) => {
           proxy: true
       },
       async (token, refreshToken, profile, done) => {
+        console.log("GoogleStrategy: profile=",profile);
         var user = await User.findOne({googleId: profile.id}).exec();
+        let email = '';
+        try {
+          email = profile.emails[0].value;
+        } catch(err){}
 
         if (!user) {
           user = await new User({
-            googleId: profile.id
+            googleId: profile.id,
+            name: profile.displayName,
+            email: email
           }).save();
         }
         console.log("GoogleStrategy: return user:", user);
