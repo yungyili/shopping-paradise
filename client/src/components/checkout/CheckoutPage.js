@@ -12,8 +12,7 @@ import {setCurrentOrder} from '../../actions/orderActions';
 
 const styles = {
   root: {
-    margin: '0',
-    marginTop: '3%',
+    margin: '2em 1em',
     maxWidth: '900px'
   }
 };

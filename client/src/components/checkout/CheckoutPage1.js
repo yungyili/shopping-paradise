@@ -17,6 +17,9 @@ import {setCurrentOrder} from '../../actions/orderActions';
 import {STRIPE} from '../../constants/orders';
 
 const styles = {
+  tableWrapper: {
+    overflowX: 'auto'
+  },
   priceTag: { textAlign:'right'},
   padding: { margin: '1em 0'},
   button: {
@@ -93,45 +96,47 @@ class CheckoutPage1 extends Component {
 
     return (
       <Paper className={classes.root}>
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Item Name</TableCell>
-              <TableCell numeric>Price</TableCell>
-              <TableCell numeric>Quantity</TableCell>
-              <TableCell numeric>Item Total</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {items.map((item, index) => {
-              const crossOutStyle=item.isSelected? {}:{textDecoration:'line-through'};
+        <div  className={classes.tableWrapper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Item Name</TableCell>
+                <TableCell numeric>Price</TableCell>
+                <TableCell numeric>Quantity</TableCell>
+                <TableCell numeric>Item Total</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {items.map((item, index) => {
+                const crossOutStyle=item.isSelected? {}:{textDecoration:'line-through'};
 
-              console.log("CheckougPage1: item=", item);
-              return (
-                <TableRow key={item.item._id}>
-                  <TableCell component="th" scope="row"
-                    style={crossOutStyle}
-                    onClick={()=>this.handleItemToggle(index)}
-                  >
-                    {item.item.title}
-                  </TableCell>
-                  <TableCell numeric style={crossOutStyle}>{item.item.price}</TableCell>
-                  <TableCell className={classes.quantitySelect}>
-                    <select
+                console.log("CheckougPage1: item=", item);
+                return (
+                  <TableRow key={item.item._id}>
+                    <TableCell component="th" scope="row"
                       style={crossOutStyle}
-                      name="quantity"
-                      value={item.quantity}
-                      onChange={(event)=>this.handleQuantityChange( index, event.target.value)}
+                      onClick={()=>this.handleItemToggle(index)}
                     >
-                      {this.renderNumberOptions(item.item.storage)}
-                    </select>
-                  </TableCell>
-                  <TableCell numeric style={crossOutStyle}>{item.item.price*item.quantity}</TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                      {item.item.title}
+                    </TableCell>
+                    <TableCell numeric style={crossOutStyle}>{item.item.price}</TableCell>
+                    <TableCell className={classes.quantitySelect}>
+                      <select
+                        style={crossOutStyle}
+                        name="quantity"
+                        value={item.quantity}
+                        onChange={(event)=>this.handleQuantityChange( index, event.target.value)}
+                      >
+                        {this.renderNumberOptions(item.item.storage)}
+                      </select>
+                    </TableCell>
+                    <TableCell numeric style={crossOutStyle}>{item.item.price*item.quantity}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
       </Paper>
     );
   }

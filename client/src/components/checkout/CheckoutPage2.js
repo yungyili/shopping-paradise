@@ -13,6 +13,9 @@ import Paper from '@material-ui/core/Paper';
 import {makeOrder, removeFromShoppingCart} from '../../actions/orderActions';
 
 const styles = {
+  table: {
+    overflowX: 'auto'
+  },
   priceTag: { textAlign:'right'},
   padding: { margin: '1em 0'},
   button: {

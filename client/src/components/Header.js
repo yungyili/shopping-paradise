@@ -121,24 +121,31 @@ class Header extends Component {
       userName = '';
     }
 
-    if (userName){
-      return (
-        <div>
-          <Grid container spacing={0}>
-            <Grid item>
-              <PersonIcon />
-            </Grid>
-            <Grid item>
-              <Typography
-              variant="title"
-              color="inherit"
-              >
-                {userName}
-              </Typography>
-            </Grid>
+    const Component = (props) => (
+      <div style={props.style}>
+        <Grid container spacing={0}>
+          <Grid item>
+            <PersonIcon />
           </Grid>
-        </div>
-      )
+          <Grid item>
+            <Typography
+            variant="title"
+            color="inherit"
+            >
+              {userName}
+            </Typography>
+          </Grid>
+        </Grid>
+      </div>
+    );
+
+    if (userName){
+      return this.applyMediaQuery(Component, {
+        xs:{
+          display: 'none'
+        },
+        sm:{},
+      });
     } else {
       return <div></div>;
     }
