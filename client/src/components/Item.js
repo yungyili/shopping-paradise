@@ -11,6 +11,8 @@ import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import Typography from '@material-ui/core/Typography';
+import MediaQuery from 'react-responsive';
 import {fetchItem} from '../actions/itemActions';
 import {setCurrentOrder, setLeaveForLogin, addToShoppingCart} from '../actions/orderActions';
 import BreadCumb from './BreadCumb';
@@ -31,9 +33,30 @@ const styles = theme => ({
     marginBottom: '1%'
   },
   button: {
-    marginRight: '0.5em'
+    padding: '0 0.5em',
+    marginBottom: '1em',
+    float: 'left'
+  },
+  quantity: {
+    float: 'left'
+  },
+  rightPanel: {
+    padding: '0 1em'
   }
 });
+
+const applyMediaQuery = (Component, styles) => {
+  return (
+    <div>
+      <MediaQuery minWidth={601}>
+        <Component style={styles.sm}/>
+      </MediaQuery>
+      <MediaQuery maxWidth={600}>
+        <Component style={styles.xs}/>
+      </MediaQuery>
+    </div>
+  );
+}
 
 class Item extends Component {
   constructor(props){
@@ -64,14 +87,60 @@ class Item extends Component {
     const { classes, auth } = this.props;
     const disabled = auth.ongoing;
 
-    return (
+    const Component = (props) => (
       <Button type="submit" variant="raised"
         color="primary" className={classes.button}
         disabled={disabled}
+        style={props.style}
       >
         Buy Now
       </Button>
     );
+
+    return applyMediaQuery(Component, {
+      xs:{width: '80%'},
+      sm:{width: 'auto', marginLeft: '1em'},
+    });
+  }
+
+  renderShoppingCart = () => {
+    const { classes, auth } = this.props;
+
+    const Component = (props) => (
+      <Button
+        variant="raised" color="secondary"
+        className={classes.button} style={props.style}
+        onClick={this.handleAddShoopingCart}
+      >
+        <AddShoppingCartIcon />
+      </Button>
+    );
+
+    return applyMediaQuery(Component, {
+      xs:{width: '100%'},
+      sm:{width: 'auto'},
+    });
+  }
+
+
+  renderQuantitySelector = (item) => {
+    const { classes, auth } = this.props;
+
+    const Component = (props) => (
+      <select name="quantity" value={this.state.quantity}
+        onChange={this.handleInputChange}
+        className={classes.quantity}
+        style={props.style}
+      >
+        <option key={0} value={0} disabled>...</option>
+        {this.renderNumberOptions(item.storage)}
+      </select>
+    );
+
+    return applyMediaQuery(Component, {
+      xs:{width: '18%', marginLeft: '2%'},
+      sm:{width: 'auto', marginLeft: '1em'},
+    });
   }
 
   handleAddShoopingCart = () => {
@@ -113,6 +182,7 @@ class Item extends Component {
     }
   }
 
+
   renderNumberOptions(n){
     return _.range(1,n+1).map(i => {
       return (<option key={i} value={i}>{i}</option>);
@@ -139,27 +209,25 @@ class Item extends Component {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Grid container spacing={24}>
+              <Grid container spacing={24} className={classes.rightPanel}>
 
                 <Grid item xs={12}>
                   <h2>{item.title}</h2>
                   <p>{item.description}</p>
-                  <h1>$ {item.price}</h1>
+                  <h1></h1>
+                  <Typography
+                  variant="display3"
+                  color="inherit"
+                  >
+                    $ {item.price}
+                  </Typography>
                 </Grid>
 
                 <Grid item xs={12}>
-                  <Button
-                    variant="raised" color="secondary" className={classes.button}
-                    onClick={this.handleAddShoopingCart}
-                  >
-                    <AddShoppingCartIcon />
-                  </Button>
                   <form onSubmit={this.handleSubmit}>
+                    {this.renderShoppingCart()}
                     {this.renderBuyButton()}
-                    <select name="quantity" value={this.state.quantity} onChange={this.handleInputChange}>
-                      <option key={0} value={0} disabled>...</option>
-                      {this.renderNumberOptions(item.storage)}
-                    </select>
+                    {this.renderQuantitySelector(item)}
                   </form>
                 </Grid>
               </Grid>
