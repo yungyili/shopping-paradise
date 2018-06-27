@@ -312,7 +312,7 @@ class LoginForm extends Component {
         <Button variant="raised" href="/api/auth/google" onClick={this.onGoogleLogin} color="secondary" className={classes.button}>
           Login with Google <GoogleIcon className={classes.icon}/>
         </Button>
-        <Button variant="raised" href="/api/auth/google" color="secondary" className={classes.button}>
+        <Button disabled variant="raised" href="/api/auth/google" color="secondary" className={classes.button}>
           Login with Facebook <FacebookIcon className={classes.icon}/>
         </Button>
         <Divider />
