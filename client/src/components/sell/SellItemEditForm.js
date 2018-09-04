@@ -21,6 +21,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControl from "@material-ui/core/FormControl";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import Typography from '@material-ui/core/Typography';
 import { fetchItem } from "../../actions/itemActions";
 import {fetchCategory} from '../../actions/categoryActions';
 
@@ -28,7 +29,9 @@ const styles = theme => ({
   root: {},
   button: {},
   input: {},
-  icon: {},
+  spacer: {
+    margin: '1em 0'
+  },
   textField: {
     marginRight: "1em"
   },
@@ -308,7 +311,7 @@ class SellItemEditForm extends Component {
 
     const temp = categories.slice(0, index+1);
     const path = temp.filter(
-      c => { return c.lft < category.lft && category.rgt < c.rgt; });
+      c => { return c.lft <= category.lft && category.rgt <= c.rgt; });
 
     return path;
   }
@@ -318,7 +321,6 @@ class SellItemEditForm extends Component {
     if (!parent) {
       return [categories.find(c => {return c._id === id;})];
     }
-    console.log("SellItemEditForm: getCategorySiblings: parent=", parent);
 
     const sibling = this.getCategoryChilds(parent._id, categories);
     return sibling;
@@ -352,25 +354,23 @@ class SellItemEditForm extends Component {
 
   rendCategoryMenu = (id, categories) => {
     const siblings = this.getCategorySiblings(id, categories);
-    console.log("SellItemEditForm: rendCategoryMenu: siblings=", siblings);
 
     return (
-      <FormControl>
-        <Select
-          value={this.state.item._category}
-          onChange={this.handleInputChange}
-          name="_category"
-        >
-           {siblings.map((c, idx) => {return (
-            <MenuItem
-              key={idx}
-              value={c._id}
-              selected={c._id===id?"selected":""}
-            >
-              {c.title}
-            </MenuItem>);})}
-        </Select>
-      </FormControl>
+      <Select
+        value={this.state.item._category}
+        onChange={this.handleInputChange}
+        name="_category"
+        style={{width:'100%'}}
+      >
+         {siblings.map((c, idx) => {return (
+          <MenuItem
+            key={idx}
+            value={c._id}
+            selected={c._id===id?"selected":""}
+          >
+            {c.title}
+          </MenuItem>);})}
+      </Select>
     );
   }
 
@@ -412,9 +412,12 @@ class SellItemEditForm extends Component {
     }
 
     return (
-        <IconButton onClick={this.onPreviousCategoryLevel}>
-          <ChevronLeftIcon />
-        </IconButton >)
+        <div style={{width:'100%', textAlign:'center'}}>
+          <Button onClick={this.onPreviousCategoryLevel}>
+            <ChevronLeftIcon />
+          </Button >
+        </div>
+    )
   }
 
   renderNextLevelCategoryButton = (id, categories) => {
@@ -425,21 +428,29 @@ class SellItemEditForm extends Component {
     }
 
     return (
-        <IconButton onClick={this.onNextCategoryLevel}>
+      <div style={{width:'100%', textAlign:'center'}}>
+        <Button onClick={this.onNextCategoryLevel}>
           <ChevronRightIcon />
-        </IconButton >)
+        </Button >
+      </div>
+    );
   }
 
   renderCategoryBreadCrumbs = (path) => {
     return (
       <div>
-        {path.map((c, idx) => {
-          if (idx == 0){
-            return <span key={idx}>{c.title}</span>;
-          } else {
-            return <span key={idx}> >> {c.title}</span>;
-          }
-        })}
+        <Typography variant="caption">
+          Category path
+        </Typography>
+        <Typography variant="body1">
+          {path.map((c, idx) => {
+            if (idx == 0){
+              return <span key={idx}>{c.title}</span>;
+            } else {
+              return <span key={idx}> >> {c.title}</span>;
+            }
+          })}
+        </Typography>
       </div>)
 
   }
@@ -453,11 +464,6 @@ class SellItemEditForm extends Component {
       return <div>...</div>;
     }
 
-    console.log("SellItemEditForm: renderCategorySelector: selectedCategoryId=",
-      selectedCategoryId,
-      "categories=",
-      categories );
-
     categories.sort((a,b)=>{
       return a.lft - b.lft;
     });
@@ -467,8 +473,6 @@ class SellItemEditForm extends Component {
       this.props.fetchCategory();
       return (<div>...</div>);
     }
-    console.log("SellItemEditForm: renderCategorySelector: child of root=", this.getCategoryChilds(root._id, categories));
-
     const path = this.getCategoryPath(selectedCategoryId, categories);
     if(!path){
       return (<div>...</div>);
@@ -476,14 +480,20 @@ class SellItemEditForm extends Component {
     console.log("SellItemEditForm: renderCategorySelector: path=", path);
 
     return (
-      <div>
+      <Grid container spacing={24}>
+        <Grid item xs={12}>
         {this.renderCategoryBreadCrumbs(path)}
-        <div>
-          {this.renderPreviousLevelCategoryButton(selectedCategoryId, categories)}
+        </Grid>
+        <Grid item xs={12}>
           {this.rendCategoryMenu(selectedCategoryId, categories)}
+        </Grid>
+        <Grid item xs={6}>
+          {this.renderPreviousLevelCategoryButton(selectedCategoryId, categories)}
+        </Grid>
+        <Grid item xs={6}>
           {this.renderNextLevelCategoryButton(selectedCategoryId, categories)}
-        </div>
-      </div>
+        </Grid>
+      </Grid>
     );
   };
 
@@ -540,6 +550,7 @@ class SellItemEditForm extends Component {
               </Grid>
               <Grid item xs={12} sm={6}>
                 {this.renderFields()}
+                <div className={classes.spacer} />
                 {this.renderCategorySelector()}
               </Grid>
               <Grid item xs={12}>
