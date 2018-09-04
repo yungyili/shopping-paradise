@@ -7,6 +7,9 @@ import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import Divider from "@material-ui/core/Divider";
 import TextField from "@material-ui/core/TextField";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -15,6 +18,9 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import FormControl from "@material-ui/core/FormControl";
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import { fetchItem } from "../../actions/itemActions";
 import {fetchCategory} from '../../actions/categoryActions';
 
@@ -300,10 +306,27 @@ class SellItemEditForm extends Component {
       return null;
     }
 
-    const path = categories.slice(0, index+1).filter(
+    const temp = categories.slice(0, index+1);
+    const path = temp.filter(
       c => { return c.lft < category.lft && category.rgt < c.rgt; });
 
     return path;
+  }
+
+  getCategorySiblings = (id, categories )=> {
+    const parent = this.getCateogryParent(id, categories);
+    if (!parent) {
+      return [categories.find(c => {return c._id === id;})];
+    }
+    console.log("SellItemEditForm: getCategorySiblings: parent=", parent);
+
+    const sibling = this.getCategoryChilds(parent._id, categories);
+    return sibling;
+  }
+
+  getCateogryParent = (id, categories) => {
+    const category = categories.find(c => {return c._id === id;});
+    return categories.find(c => {return c._id === category.parentId;});
   }
 
   getCategoryChilds = (id, categories) => {
@@ -327,6 +350,100 @@ class SellItemEditForm extends Component {
     return ret;
   }
 
+  rendCategoryMenu = (id, categories) => {
+    const siblings = this.getCategorySiblings(id, categories);
+    console.log("SellItemEditForm: rendCategoryMenu: siblings=", siblings);
+
+    return (
+      <FormControl>
+        <Select
+          value={this.state.item._category}
+          onChange={this.handleInputChange}
+          name="_category"
+        >
+           {siblings.map((c, idx) => {return (
+            <MenuItem
+              key={idx}
+              value={c._id}
+              selected={c._id===id?"selected":""}
+            >
+              {c.title}
+            </MenuItem>);})}
+        </Select>
+      </FormControl>
+    );
+  }
+
+  onNextCategoryLevel = () => {
+    const { classes } = this.props;
+    const categories = this.props.category.content.category;
+    const selectedCategoryId = this.state.item._category;
+
+    const childs = this.getCategoryChilds(selectedCategoryId, categories);
+    if(!childs){
+      return;
+    }
+
+    const newState = {...this.state};
+    newState.item._category = childs[0]._id;
+    this.setState(newState);
+  }
+
+  onPreviousCategoryLevel = () => {
+    const { classes } = this.props;
+    const categories = this.props.category.content.category;
+    const selectedCategoryId = this.state.item._category;
+
+    const parent = this.getCateogryParent(selectedCategoryId, categories);
+    if (!parent) {
+      return;
+    }
+
+    const newState = {...this.state};
+    newState.item._category = parent._id;
+    this.setState(newState);
+  }
+
+  renderPreviousLevelCategoryButton = (id, categories) => {
+    const parent = this.getCateogryParent(id, categories);
+
+    if (!parent) {
+      return null;
+    }
+
+    return (
+        <IconButton onClick={this.onPreviousCategoryLevel}>
+          <ChevronLeftIcon />
+        </IconButton >)
+  }
+
+  renderNextLevelCategoryButton = (id, categories) => {
+    const childs = this.getCategoryChilds(id, categories);
+
+    if (childs.length === 0) {
+      return null;
+    }
+
+    return (
+        <IconButton onClick={this.onNextCategoryLevel}>
+          <ChevronRightIcon />
+        </IconButton >)
+  }
+
+  renderCategoryBreadCrumbs = (path) => {
+    return (
+      <div>
+        {path.map((c, idx) => {
+          if (idx == 0){
+            return <span key={idx}>{c.title}</span>;
+          } else {
+            return <span key={idx}> >> {c.title}</span>;
+          }
+        })}
+      </div>)
+
+  }
+
   renderCategorySelector = () => {
     const { classes } = this.props;
     const categories = this.props.category.content.category;
@@ -335,6 +452,11 @@ class SellItemEditForm extends Component {
     if (!categories || !selectedCategoryId) {
       return <div>...</div>;
     }
+
+    console.log("SellItemEditForm: renderCategorySelector: selectedCategoryId=",
+      selectedCategoryId,
+      "categories=",
+      categories );
 
     categories.sort((a,b)=>{
       return a.lft - b.lft;
@@ -353,7 +475,16 @@ class SellItemEditForm extends Component {
     }
     console.log("SellItemEditForm: renderCategorySelector: path=", path);
 
-    return <div>Category Selector</div>;
+    return (
+      <div>
+        {this.renderCategoryBreadCrumbs(path)}
+        <div>
+          {this.renderPreviousLevelCategoryButton(selectedCategoryId, categories)}
+          {this.rendCategoryMenu(selectedCategoryId, categories)}
+          {this.renderNextLevelCategoryButton(selectedCategoryId, categories)}
+        </div>
+      </div>
+    );
   };
 
   renderNavigationButton = () => {
