@@ -127,14 +127,12 @@ const toolbarStyles = theme => ({
   },
 });
 
-
-
 let EnhancedTableToolbar = props => {
-  const { numSelected, selected, items, classes } = props;
+  const { numSelected, selected, rowsPerPage, page, items, classes } = props;
 
   const getOnlySelectedItemId = () => {
     if (numSelected == 1) {
-      return items[selected]._id;
+      return items[selected[0] + page*rowsPerPage]._id;
     } else {
       return null;
     }
@@ -304,12 +302,11 @@ class EnhancedTable extends React.Component {
     const { items, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
 
-
     return (
       <div>
         <LinearProgress color="secondary" style={{visibility: user.ongoing? 'visible':'hidden'}} />
         <Paper className={classes.root} style={{marginTop: '0'}}>
-          <EnhancedTableToolbar numSelected={selected.length} selected={selected} items={items}/>
+          <EnhancedTableToolbar numSelected={selected.length} selected={selected} items={items} page={page} rowsPerPage={rowsPerPage}/>
           <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
               <EnhancedTableHead
