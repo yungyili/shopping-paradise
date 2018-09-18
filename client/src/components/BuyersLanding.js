@@ -228,13 +228,14 @@ class BuyersLanding extends Component {
   );
 
   renderItems(){
-    const { classes, item } = this.props;
-    if (!item.content || !item.content.length){
-      if(!item.ongoing) {
-        return <div>There is no item in this category</div>;
-      }
+    const { classes, item, category } = this.props;
 
-      return [<CircularProgress key={0} className={classes.progress} size={20} />];
+    if (item.ongoing) {
+      return (<LinearProgress color="secondary" />)
+    }
+
+    if (!item.content || !item.content.length){
+        return <div>There is no item in this category</div>;
     }
 
     return (
@@ -266,7 +267,7 @@ class BuyersLanding extends Component {
   render(){
     const { classes, category, item, itemCount } = this.props;
 
-    if (category.ongoing || item.ongoing || itemCount.ongoing){
+    if (category.ongoing || itemCount.ongoing){
       return (<LinearProgress color="secondary" />)
     }
 

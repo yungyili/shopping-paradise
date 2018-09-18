@@ -30,7 +30,7 @@ export default function itemReducer(state=createEmptyItem(), action) {
   case FETCHING_CATEGORY_ITEM:
   {
     const newItem = createEmptyItem();
-    newItem.onging = true;
+    newItem.ongoing = true;
     return newItem;
   }
   case FETCH_CATEGORY_ITEM_OK:
@@ -50,7 +50,7 @@ export default function itemReducer(state=createEmptyItem(), action) {
   case FETCHING_ITEM:
   {
     const newItem = createEmptyItem();
-    newItem.onging = true;
+    newItem.ongoing = true;
     return newItem;
   }
 
@@ -68,69 +68,7 @@ export default function itemReducer(state=createEmptyItem(), action) {
     return newItem;
   }
 
-  case CREATING_ITEM:
-  {
-    const newItem = createEmptyItem();
-    newItem.onging = true;
-    return newItem;
-  }
 
-  case CREATE_ITEM_OK:
-  {
-    const newItem = createEmptyItem();
-    newItem.content = action.payload.content;
-    return newItem;
-  }
-
-  case CREATE_ITEM_FAIL:
-  {
-    const newItem = createEmptyItem();
-    newItem.error = action.payload.error;
-    return newItem;
-  }
-
-  case DELETING_ITEM:
-  {
-    const newItem = createEmptyItem();
-    newItem.onging = true;
-    return newItem;
-  }
-
-  case DELETE_ITEM_OK:
-  {
-    const newItem = createEmptyItem();
-    newItem.content = action.payload.content;
-    return newItem;
-  }
-
-  case DELETE_ITEM_FAIL:
-  {
-    const newItem = createEmptyItem();
-    newItem.error = action.payload.error;
-    return newItem;
-  }
-
-  case UPDATING_ITEM:
-  {
-    const newItem = createEmptyItem();
-    newItem.onging = true;
-    return newItem;
-  }
-
-  case UPDATE_ITEM_OK:
-  {
-    const newItem = createEmptyItem();
-    newItem.content = action.payload.content;
-    return newItem;
-  }
-
-  case UPDATE_ITEM_FAIL:
-  {
-    const newItem = createEmptyItem();
-    newItem.error = action.payload.error;
-    return newItem;
-  }
-  
   default:
     return state;
   }
