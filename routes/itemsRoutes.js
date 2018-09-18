@@ -1,30 +1,55 @@
 const mongoose = require('mongoose');
+const jwt = require("jwt-simple");
+const keys = require('../config/keys');
 const Item = mongoose.model('items');
 const Category = mongoose.model('categories');
 
-module.exports = (app) => {
+const createItem = async (req, res) => {
+  console.log("post /api/item:", req.body);
+
+  const {title, description, pictureUrl,
+    price, storage, _category, isBuyable} = req.body;
+
+  const _user = req.user.id;
+
+  const newItem = await new Item({
+    title: title,
+    description: description,
+    pictureUrl: pictureUrl,
+    price: price,
+    storage: storage,
+    _user: _user,
+    _category: _category,
+    isBuyable: isBuyable
+  }).save();
+  console.log("post /item: newItem=", newItem);
+
+  res.json(newItem);
+}
+
+
+module.exports = (app, passport) => {
   app.post("/api/item",
-    async (req, res) => {
-      console.log("post /item:", req.body);
+  (req, res, next) => {
+    console.log("/api/item: google: req.user", req.user);
+    if (req.user){
+      createItem(req, res);
+      return;
+    }
+    next();
+  },
+  passport.authenticate('jwt', keys.jwtSession),
+  (req, res) => {
+    console.log("/api/item: jwt: req.user", req.user);
+    if (req.user){
+      createItem(req, res);
+    } else {
+      res.sendStatus(400);
+    }
+  }
+);
 
-      const {title, description, pictureUrl,
-        price, storage, _user, _category} = req.body;
-
-      const newItem = await new Item({
-        title: title,
-        description: description,
-        pictureUrl: pictureUrl,
-        price: price,
-        storage: storage,
-        _user: _user,
-        _category: _category
-      }).save();
-      console.log("post /item: newItem=", newItem);
-
-      res.json(newItem);
-    });
-
-  app.get('/api/item/:id' /*auth.authenticate(),*/, 
+  app.get('/api/item/:id' /*auth.authenticate(),*/,
     async (req, res) => {
       console.log('get /api/item:', req.params.id);
       const itemId = req.params.id;

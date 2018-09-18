@@ -6,7 +6,11 @@ import {
 
 const makeEmptyCategory = () => {
   return {
-    content: [],
+    content: {
+      category: [],
+      path: [],
+      sibling: []
+    },
     error: null,
     ongoing: false
   };

@@ -22,7 +22,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
-import { fetchItem } from "../../actions/itemActions";
+import { fetchItem, createItem } from "../../actions/itemActions";
 import {fetchCategory} from '../../actions/categoryActions';
 
 const styles = theme => ({
@@ -107,18 +107,24 @@ class SellItemEditForm extends Component {
 
   updateItemStateByProps = nextProps => {
     const newState = this.state;
-    newState.item = { ...nextProps.item.content[0] };
+    const itemId = this.props.match.params.id;
 
-    const categories = nextProps.category.content;
-    if (categories.length > 0) {
-      const root = categories.find(c => c.parentId === undefined);
+    if (itemId && nextProps.item.content.length > 0) {
+      newState.item = { ...nextProps.item.content[0] };
+    }
+
+    const categories = nextProps.category.content.category;
+    if (categories.length > 0 && !itemId ) {
+      const root = categories.find(c => {return c.parentId === undefined});
+      console.log("SellItemEditForm: updateItemStateByProps: root=", root );
       newState.item._category = root._id;
     }
     this.setState(newState);
   };
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.item.content.length > 0 || nextProps.category.content.length > 0) {
+    console.log("SellItemEditForm: componentWillReceiveProps: nextProps=", nextProps );
+    if (nextProps.item.content.length > 0 || nextProps.category.content.category.length > 0) {
       this.updateItemStateByProps(nextProps);
     }
   }
@@ -135,18 +141,23 @@ class SellItemEditForm extends Component {
     event.preventDefault();
     console.log("SellItemEditForm: handleSubmit");
 
+    var error = false;
     const newState = {...this.state};
-
-    const requiredFields = ['title', 'pictureUrl', 'price', 'storage', '_category', 'isBuyable'];
+    const requiredFields = ['title', 'pictureUrl', 'price', 'storage', '_category'];
 
     requiredFields.map(field => {
       newState.error[field] = '';
       if (!this.state.item[field]) {
         newState.error[field] = 'Required Field';
+        error = true;
       }
     });
 
     this.setState(newState);
+    if (!error) {
+      const itemToCreate = {...this.state.item};
+      this.props.createItem(itemToCreate);
+    }
   }
 
   handleInputChange(event) {
@@ -573,10 +584,11 @@ SellItemEditForm.propTypes = {
 function mapStateToProps(state) {
   return {
     item: state.item,
-    category: state.category
+    category: state.category,
+    auth: state.auth
   };
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps, { fetchItem, fetchCategory })(withRouter(SellItemEditForm))
+  connect(mapStateToProps, { fetchItem, fetchCategory, createItem })(withRouter(SellItemEditForm))
 );

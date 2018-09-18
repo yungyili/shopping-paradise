@@ -4,7 +4,10 @@ import {
   FETCH_ITEM_FAIL,
   FETCHING_CATEGORY_ITEM,
   FETCH_CATEGORY_ITEM_OK,
-  FETCH_CATEGORY_ITEM_FAIL
+  FETCH_CATEGORY_ITEM_FAIL,
+  CREATING_ITEM,
+  CREATE_ITEM_OK,
+  CREATE_ITEM_FAIL,
 } from '../actions/actionTypes';
 
 
@@ -48,7 +51,7 @@ export default function itemReducer(state={content:{}, error:null}, action) {
       content: state.content,
       error: action.payload.error,
       ongoing: false
-    }  
+    }
   default:
     return state;
   }

@@ -8,7 +8,10 @@ import {
   FETCH_CATEGORY_ITEM_FAIL,
   FETCHING_ITEM_COUNT,
   FETCH_ITEM_COUNT_OK,
-  FETCH_ITEM_COUNT_FAIL
+  FETCH_ITEM_COUNT_FAIL,
+  CREATING_ITEM,
+  CREATE_ITEM_OK,
+  CREATE_ITEM_FAIL,
 } from './actionTypes';
 
 export const fetchCategoryItem = (categoryId, pageNum, perPage) =>
@@ -77,6 +80,44 @@ export const fetchItemCount = (categoryId) =>
       });
     };
 
+export const createItem = ({title, description, price, storage, pictureUrl, _category, _user, isBuyable}) =>
+  async (dispatch) => {
+    const item = {title, description, price, storage, pictureUrl, _category, _user, isBuyable};
+
+    console.log("createItem: item=", item);
+
+    dispatch({
+      type: CREATING_ITEM,
+      payload: null
+    });
+
+    const jwtToken = localStorage.getItem('jwtToken');
+
+    await axios.post(`/api/item`, item, {
+        headers: { Authorization: `JWT ${jwtToken}` }
+      })
+      .then((res)=>{
+        dispatch({
+          type: CREATE_ITEM_OK,
+          payload: {
+            content: res.payload,
+            error: null
+          }
+        });
+      })
+      .catch(e=>{
+        console.log("createItem: failed");
+        dispatch({
+          type: CREATE_ITEM_FAIL,
+          payload: {
+            content: null,
+            error: e
+          }
+        });
+      });
+
+  }
+
 export const fetchItem = (itemId) =>
   async (dispatch) => {
     console.log("fetchItem: itemId=", itemId);
@@ -109,4 +150,4 @@ export const fetchItem = (itemId) =>
           }
         });
       });
-  };     
+  };

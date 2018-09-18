@@ -4,9 +4,6 @@ export const FETCH_CATEGORY_FAIL = 'fetch_category_fail';
 export const FETCHING_CATEGORY_ITEM = 'fetching_category_item';
 export const FETCH_CATEGORY_ITEM_OK = 'fetch_category_item_ok';
 export const FETCH_CATEGORY_ITEM_FAIL = 'fetch_category_item_fail';
-export const FETCHING_ITEM = 'fetching_item';
-export const FETCH_ITEM_OK = 'fetch_item_ok';
-export const FETCH_ITEM_FAIL = 'fetch_item_fail';
 export const FETCHING_ITEM_COUNT = 'fetching_itemcount';
 export const FETCH_ITEM_COUNT_OK = 'fetch_item_count_ok';
 export const FETCH_ITEM_COUNT_FAIL = 'fetch_item_count_fail';
@@ -20,6 +17,14 @@ export const FETCH_CURRENT_USER_FAIL = 'fetch_current_user_fail';
 export const LOGGING_OUT = 'logging_out';
 export const LOGOUT_OK = 'logout_ok';
 export const LOGOUT_FAIL = 'logout_fail';
+
+/* Item */
+export const FETCHING_ITEM = 'fetching_item';
+export const FETCH_ITEM_OK = 'fetch_item_ok';
+export const FETCH_ITEM_FAIL = 'fetch_item_fail';
+export const CREATING_ITEM = 'creating_item';
+export const CREATE_ITEM_OK = 'create_item_ok';
+export const CREATE_ITEM_FAIL = 'create_item_fail';
 
 /* Order */
 export const PAYING = 'paying';
