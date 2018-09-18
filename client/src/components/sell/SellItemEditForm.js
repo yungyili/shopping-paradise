@@ -22,7 +22,8 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
-import { fetchItem, createItem, updateItem } from "../../actions/itemActions";
+import { fetchItem} from "../../actions/itemActions";
+import { createItem, updateItem } from "../../actions/userActions";
 import {fetchCategory} from '../../actions/categoryActions';
 
 const styles = theme => ({
@@ -164,6 +165,7 @@ class SellItemEditForm extends Component {
       } else {
         this.props.updateItem(newItem);
       }
+      this.props.history.push('/sell/item');
     }
   }
 

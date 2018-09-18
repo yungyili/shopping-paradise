@@ -26,7 +26,7 @@ import red from '@material-ui/core/colors/red';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import {fetchUserItems} from '../../actions/userActions';
-
+import {deleteItem} from '../../actions/userActions';
 
 const columnData = [
   { id: 'title', numeric: false, disablePadding: true, label: 'title' },
@@ -128,7 +128,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-  const { numSelected, selected, rowsPerPage, page, items, classes } = props;
+  const { numSelected, selected, rowsPerPage, page, items, classes, handleDeleteItems } = props;
 
   const getOnlySelectedItemId = () => {
     if (numSelected == 1) {
@@ -174,7 +174,7 @@ let EnhancedTableToolbar = props => {
         {numSelected > 0 && (
           <Grid item className={classes.action}>
             <Tooltip title="Delete">
-              <IconButton aria-label="Delete">
+              <IconButton aria-label="Delete" onClick={handleDeleteItems}>
                 <DeleteIcon style={{color:red[900]}}/>
               </IconButton>
             </Tooltip>
@@ -226,6 +226,16 @@ class EnhancedTable extends React.Component {
       page: 0,
       rowsPerPage: 5,
     };
+  }
+
+  handleDeleteItems = () => {
+    const {items, selected, page, rowsPerPage } = this.state;
+    console.log("EnhancedTable: handleDeleteItems, selected=", selected);
+    for (var i=0;i<selected.length; i++) {
+      this.props.deleteItem(items[selected[i] + page*rowsPerPage]._id);
+    }
+    this.setState({ selected: [] });
+    this.props.history.push('/sell/item');
   }
 
   updateUserStateByProps = (nextProps) => {
@@ -306,7 +316,10 @@ class EnhancedTable extends React.Component {
       <div>
         <LinearProgress color="secondary" style={{visibility: user.ongoing? 'visible':'hidden'}} />
         <Paper className={classes.root} style={{marginTop: '0'}}>
-          <EnhancedTableToolbar numSelected={selected.length} selected={selected} items={items} page={page} rowsPerPage={rowsPerPage}/>
+          <EnhancedTableToolbar numSelected={selected.length} selected={selected}
+            items={items} page={page} rowsPerPage={rowsPerPage}
+            handleDeleteItems={this.handleDeleteItems}
+          />
           <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
               <EnhancedTableHead
@@ -383,6 +396,6 @@ function mapStateToProps(state){
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps,{fetchUserItems})(
+  connect(mapStateToProps,{fetchUserItems, deleteItem})(
     withRouter(EnhancedTable)
   ));

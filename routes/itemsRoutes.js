@@ -22,16 +22,25 @@ const createItem = async (req, res) => {
     _category: _category,
     isBuyable: isBuyable
   }).save();
-  console.log("post /item: newItem=", newItem);
+  console.log("post /api/item: newItem=", newItem);
 
-  res.json(newItem);
+  const items = await Item.find({_user: _user}).exec();
+  if(!items){
+    console.log("post /api/item: cannot find user items");
+    res.sendStatus(400);
+    return;
+  }
+
+  res.json(items);
 }
 
 const updateItem = async (req, res) => {
   console.log("put /api/item:", req.body);
 
-  const {_id, title, description, pictureUrl,
+  const {title, description, pictureUrl,
     price, storage, _category, isBuyable} = req.body;
+
+  const itemId = req.params.id;
 
   const newData = {title, description, pictureUrl,
     price, storage, _category, isBuyable};
@@ -39,7 +48,7 @@ const updateItem = async (req, res) => {
   const _user = req.user.id;
 
   try {
-    await Item.findOneAndUpdate({_id: _id},
+    await Item.findOneAndUpdate({_id: itemId},
       {
       title: title,
       description: description,
@@ -51,14 +60,14 @@ const updateItem = async (req, res) => {
       isBuyable: isBuyable
     }).exec();
 
-    const item = await Item.findOne({_id: _id}).exec();
-    if (!item) {
-      console.log("put /api/item: cannot find item");
+    const items = await Item.find({_user: _user}).exec();
+    if(!items){
+      console.log("put /api/item: cannot find user items");
       res.sendStatus(400);
       return;
-    } else {
-      res.json(item);
     }
+
+    res.json(items);
 
   } catch (err) {
     console.log("put /api/item: failed. err=", err);
@@ -67,6 +76,29 @@ const updateItem = async (req, res) => {
   }
 }
 
+const deleteItem = async (req, res) => {
+  console.log("delete /api/item:", req.body);
+
+  const itemId = req.params.id;
+  const _user = req.user.id;
+
+  await Item.findOneAndDelete({_id: itemId, _user: _user},async function(err, doc){
+    if (err) {
+      console.log("delete /api/item: cannot delete item");
+      res.sendStatus(400);
+      return;
+    }
+
+    const items = await Item.find({_user: _user}).exec();
+    if(!items){
+      console.log("delete /api/item: cannot find user items");
+      res.sendStatus(400);
+      return;
+    }
+
+    res.json(items);
+  });
+}
 
 module.exports = (app, passport) => {
   app.post("/api/item",
@@ -89,7 +121,7 @@ module.exports = (app, passport) => {
     }
   );
 
-  app.put("/api/item",
+  app.put("/api/item/:id",
     (req, res, next) => {
       console.log("put /api/item: google: req.user", req.user);
       if (req.user){
@@ -103,6 +135,26 @@ module.exports = (app, passport) => {
       console.log("put /api/item: jwt: req.user", req.user);
       if (req.user){
         updateItem(req, res);
+      } else {
+        res.sendStatus(400);
+      }
+    }
+  );
+
+  app.delete("/api/item/:id",
+    (req, res, next) => {
+      console.log("delete /api/item: google: req.user", req.user);
+      if (req.user){
+        deleteItem(req, res);
+        return;
+      }
+      next();
+    },
+    passport.authenticate('jwt', keys.jwtSession),
+    (req, res) => {
+      console.log("delete /api/item: jwt: req.user", req.user);
+      if (req.user) {
+        deleteItem(req, res);
       } else {
         res.sendStatus(400);
       }
