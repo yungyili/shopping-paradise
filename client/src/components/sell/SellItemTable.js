@@ -130,9 +130,12 @@ const toolbarStyles = theme => ({
 let EnhancedTableToolbar = props => {
   const { numSelected, selected, rowsPerPage, page, items, classes, handleDeleteItems } = props;
 
+ console.log("EnhancedTableToolbar: selected=", selected);
+
   const getOnlySelectedItemId = () => {
     if (numSelected == 1) {
-      return items[selected[0] + page*rowsPerPage]._id;
+      const item = items.find(item => {return item._id === selected[0]; });
+      return item._id;
     } else {
       return null;
     }
@@ -232,7 +235,7 @@ class EnhancedTable extends React.Component {
     const {items, selected, page, rowsPerPage } = this.state;
     console.log("EnhancedTable: handleDeleteItems, selected=", selected);
     for (var i=0;i<selected.length; i++) {
-      this.props.deleteItem(items[selected[i] + page*rowsPerPage]._id);
+      this.props.deleteItem(selected[i]);
     }
     this.setState({ selected: [] });
     this.props.history.push('/sell/item');
@@ -331,16 +334,16 @@ class EnhancedTable extends React.Component {
                 rowCount={items.length}
               />
               <TableBody>
-                {items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n, id) => {
-                  const isSelected = this.isSelected(id);
+                {items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
+                  const isSelected = this.isSelected(n._id);
                   return (
                     <TableRow
                       hover
-                      onClick={event => this.handleClick(event, id)}
+                      onClick={event => this.handleClick(event, n._id)}
                       role="checkbox"
                       aria-checked={isSelected}
                       tabIndex={-1}
-                      key={id}
+                      key={n._id}
                       selected={isSelected}
                     >
                       <TableCell padding="checkbox">

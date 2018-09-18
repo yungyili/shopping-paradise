@@ -88,14 +88,13 @@ export const fetchUserItems = () =>
     async (dispatch) => {
       const item = {title, description, price, storage, pictureUrl, _category, _user, isBuyable};
 
-      console.log("updateItem: item=", item);
-
       dispatch({
         type: UPDATING_ITEM,
         payload: null
       });
 
       const jwtToken = localStorage.getItem('jwtToken');
+      console.log("updateItem: item=", item, "token=", jwtToken);
 
       await axios.put(`/api/item/${_id}`, item, {
           headers: { Authorization: `JWT ${jwtToken}` }
