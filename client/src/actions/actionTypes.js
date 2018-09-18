@@ -25,6 +25,9 @@ export const FETCH_ITEM_FAIL = 'fetch_item_fail';
 export const CREATING_ITEM = 'creating_item';
 export const CREATE_ITEM_OK = 'create_item_ok';
 export const CREATE_ITEM_FAIL = 'create_item_fail';
+export const UPDATING_ITEM = 'updating_item';
+export const UPDATE_ITEM_OK = 'update_item_ok';
+export const UPDATE_ITEM_FAIL = 'update_item_fail';
 
 /* Order */
 export const PAYING = 'paying';

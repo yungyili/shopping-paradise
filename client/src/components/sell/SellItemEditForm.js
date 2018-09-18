@@ -22,7 +22,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
-import { fetchItem, createItem } from "../../actions/itemActions";
+import { fetchItem, createItem, updateItem } from "../../actions/itemActions";
 import {fetchCategory} from '../../actions/categoryActions';
 
 const styles = theme => ({
@@ -80,6 +80,7 @@ class SellItemEditForm extends Component {
     super(props);
     this.state = {
       item: {
+        _id: '',
         title: '',
         description: '',
         pictureUrl: '',
@@ -89,6 +90,7 @@ class SellItemEditForm extends Component {
         isBuyable: false
       },
       error: {
+        _id: null,
         title: null,
         description: null,
         pictureUrl: null,
@@ -155,8 +157,13 @@ class SellItemEditForm extends Component {
 
     this.setState(newState);
     if (!error) {
-      const itemToCreate = {...this.state.item};
-      this.props.createItem(itemToCreate);
+      const itemId = this.props.match.params.id;
+      const newItem = {...this.state.item};
+      if (!itemId) {
+        this.props.createItem(newItem);
+      } else {
+        this.props.updateItem(newItem);
+      }
     }
   }
 
@@ -590,5 +597,5 @@ function mapStateToProps(state) {
 }
 
 export default withStyles(styles)(
-  connect(mapStateToProps, { fetchItem, fetchCategory, createItem })(withRouter(SellItemEditForm))
+  connect(mapStateToProps, { fetchItem, fetchCategory, createItem, updateItem })(withRouter(SellItemEditForm))
 );

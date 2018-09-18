@@ -27,27 +27,87 @@ const createItem = async (req, res) => {
   res.json(newItem);
 }
 
+const updateItem = async (req, res) => {
+  console.log("put /api/item:", req.body);
+
+  const {_id, title, description, pictureUrl,
+    price, storage, _category, isBuyable} = req.body;
+
+  const newData = {title, description, pictureUrl,
+    price, storage, _category, isBuyable};
+
+  const _user = req.user.id;
+
+  try {
+    await Item.findOneAndUpdate({_id: _id},
+      {
+      title: title,
+      description: description,
+      pictureUrl: pictureUrl,
+      price: price,
+      storage: storage,
+      _user: _user,
+      _category: _category,
+      isBuyable: isBuyable
+    }).exec();
+
+    const item = await Item.findOne({_id: _id}).exec();
+    if (!item) {
+      console.log("put /api/item: cannot find item");
+      res.sendStatus(400);
+      return;
+    } else {
+      res.json(item);
+    }
+
+  } catch (err) {
+    console.log("put /api/item: failed. err=", err);
+    res.sendStatus(400);
+    return;
+  }
+}
+
 
 module.exports = (app, passport) => {
   app.post("/api/item",
-  (req, res, next) => {
-    console.log("/api/item: google: req.user", req.user);
-    if (req.user){
-      createItem(req, res);
-      return;
+    (req, res, next) => {
+      console.log("post /api/item: google: req.user", req.user);
+      if (req.user){
+        createItem(req, res);
+        return;
+      }
+      next();
+    },
+    passport.authenticate('jwt', keys.jwtSession),
+    (req, res) => {
+      console.log("post /api/item: jwt: req.user", req.user);
+      if (req.user){
+        createItem(req, res);
+      } else {
+        res.sendStatus(400);
+      }
     }
-    next();
-  },
-  passport.authenticate('jwt', keys.jwtSession),
-  (req, res) => {
-    console.log("/api/item: jwt: req.user", req.user);
-    if (req.user){
-      createItem(req, res);
-    } else {
-      res.sendStatus(400);
+  );
+
+  app.put("/api/item",
+    (req, res, next) => {
+      console.log("put /api/item: google: req.user", req.user);
+      if (req.user){
+        updateItem(req, res);
+        return;
+      }
+      next();
+    },
+    passport.authenticate('jwt', keys.jwtSession),
+    (req, res) => {
+      console.log("put /api/item: jwt: req.user", req.user);
+      if (req.user){
+        updateItem(req, res);
+      } else {
+        res.sendStatus(400);
+      }
     }
-  }
-);
+  );
 
   app.get('/api/item/:id' /*auth.authenticate(),*/,
     async (req, res) => {
